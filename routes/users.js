@@ -1,8 +1,7 @@
-var express = require('express');
-var router = express.Router();
+const router = require('express').Router();
 
 /* GET users listing. */
-router.get('/', (req, res, next) => {
+router.get('/', (req, res) => {
   res.send('respond with a resource');
 });
 
