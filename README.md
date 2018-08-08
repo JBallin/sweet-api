@@ -1,1 +1,1 @@
-API for [ballin-backups](https://github.com/JBallin/ballin-backups).
+API for [My Sweet Config](https://github.com/JBallin/sweet-config).
