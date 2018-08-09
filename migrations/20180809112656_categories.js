@@ -1,5 +1,5 @@
 exports.up = knex => (
-  knex.schema.createTable('categories', table => {
+  knex.schema.createTable('categories', (table) => {
     table.increments();
     table.string('title').notNullable();
   })

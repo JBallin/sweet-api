@@ -1,5 +1,5 @@
 exports.up = knex => (
-  knex.schema.createTable('file_types', table => {
+  knex.schema.createTable('file_types', (table) => {
     table.increments();
     table.string('title').notNullable();
     table.string('extension').defaultTo('');
