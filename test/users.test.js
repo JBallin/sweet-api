@@ -5,7 +5,7 @@ const knex = require('../knex');
 describe('users', () => {
   beforeEach(() => {
     return knex.migrate.rollback()
-    then(() => knex.migrate.latest())
+    .then(() => knex.migrate.latest())
     .then(() => knex.seed.run())
   })
   after(() => knex.destroy());
