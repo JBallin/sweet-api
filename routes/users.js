@@ -1,8 +1,9 @@
 const router = require('express').Router();
+const knex = require('../knex');
 
-/* GET users listing. */
 router.get('/', (req, res) => {
-  res.send('respond with a resource');
+  knex('users')
+  .then(users => res.json(users))
 });
 
 module.exports = router;
