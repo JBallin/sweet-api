@@ -1,10 +1,12 @@
-exports.seed = function(knex, Promise) {
-  return knex('categories').del()
-    .then(() => {
-      return knex('categories').insert([
-        {colName: 'rowValue1'},
-        {colName: 'rowValue2'},
-        {colName: 'rowValue3'}
-      ]);
-    });
-};
+exports.seed = knex => (
+  knex('categories').del()
+  .then(() => knex('categories').insert([
+    {title: 'Shell'},
+    {title: 'Brew'},
+    {title: 'Git'},
+    {title: 'Node'},
+    {title: 'Atom'},
+    {title: 'VS Code'},
+    {title: 'Text Editors'}
+  ]))
+);
