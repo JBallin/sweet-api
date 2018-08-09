@@ -7,11 +7,12 @@ module.exports = {
 
   testing: {
     client: 'pg',
-    connection: 'postgres://localhost/sweet_test',
+    connection: 'postgres://localhost/sweet_test'
+  },
 
   production: {
     client: 'pg',
     connection: process.env.DATABASE_URL
   }
-  
+
 };
