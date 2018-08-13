@@ -96,6 +96,25 @@ exports.seed = knex => (
         categories_id: 6,
       },
       {
+        title: 'brackets_settings',
+        extension: '.json',
+        categories_id: 6,
+      },
+      {
+        title: 'brackets_keymap',
+        extension: '.json',
+        categories_id: 6,
+      },
+      {
+        title: 'brackets_extensions',
+        categories_id: 6,
+      },
+      {
+        title: 'brackets_disabled_extensions',
+        extension: '.json',
+        categories_id: 6,
+      },
+      {
         title: 'vimrc',
         categories_id: 7,
       },
