@@ -5,7 +5,9 @@
   "scripts": {
     "start": "node ./bin/www",
     "dev": "nodemon ./bin/www",
-    "test": "eslint . && NODE_ENV=test mocha"
+    "test": "eslint . && NODE_ENV=test mocha",
+    "seed-dev": "knex migrate:rollback; knex migrate:latest; knex seed:run",
+    "seed-prod": "heroku run 'knex migrate:rollback; knex migrate:latest; knex seed:run'"
   },
   "dependencies": {
     "bcrypt": "^3.0.0",
