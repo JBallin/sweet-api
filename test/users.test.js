@@ -6,7 +6,6 @@ describe('users', () => {
   beforeEach(() => knex.migrate.rollback()
     .then(() => knex.migrate.latest())
     .then(() => knex.seed.run()));
-  after(() => knex.destroy());
 
   it('should return JSON', (done) => {
     request(app)
