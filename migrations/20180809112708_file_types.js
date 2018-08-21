@@ -3,7 +3,7 @@ exports.up = knex => (
     table.increments();
     table.string('title').notNullable();
     table.string('extension').defaultTo('');
-    table.integer('categories_id').references('categories_id');
+    table.integer('category_id').references('categories.id');
   })
 );
 
