@@ -10,7 +10,7 @@ describe('gist API', () => {
     done();
   });
   it('should return non-empty array with working gistID', (done) => {
-    fetchGistFiles(process.env.JBALLIN_GIST_ID).then((res) => {
+    fetchGistFiles(process.env.GIST_ID).then((res) => {
       assert.isArray(res);
       assert.isString(res[2]);
     });
