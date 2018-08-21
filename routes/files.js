@@ -15,14 +15,17 @@ router.get('/', (req, res) => {
                 const rez = result;
                 const newFile = { title, extension };
                 if (gistFiles.includes(title + extension)) {
-                  if (rez[category]) {
-                    rez[category].push(newFile);
+                  const i = rez.findIndex(e => Object.keys(e)[0] === category);
+                  if (i === -1) {
+                    const newCategory = {};
+                    newCategory[category] = [newFile];
+                    rez.push(newCategory);
                   } else {
-                    rez[category] = [newFile];
+                    rez[i][category].push(newFile);
                   }
                 }
                 return rez;
-              }, {});
+              }, []);
               res.json(files);
             });
         });
