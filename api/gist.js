@@ -1,4 +1,3 @@
-require('dotenv').config();
 const fetch = require('node-fetch');
 
 const gistAPI = 'https://api.github.com/gists';
