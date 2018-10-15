@@ -1,3 +1,5 @@
+/* eslint-disable prefer-arrow-callback, func-names */
+
 const { assert } = require('chai');
 const fetchGistFiles = require('../api/gist');
 
@@ -11,13 +13,13 @@ describe('gist API', () => {
     });
     done();
   });
-  if (gistId) {
-    it('should return non-empty array with working gistID', (done) => {
-      fetchGistFiles(gistId).then((res) => {
-        assert.isArray(res);
-        assert.isString(res[2]);
-      });
-      done();
+  it('should return non-empty array with working gistID', function (done) {
+    if (!gistId) this.skip();
+
+    fetchGistFiles(gistId).then((res) => {
+      assert.isArray(res);
+      assert.isString(res[2]);
     });
-  }
+    done();
+  });
 });
