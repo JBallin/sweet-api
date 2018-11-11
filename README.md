@@ -1,13 +1,21 @@
 API for [My Sweet Config](https://github.com/JBallin/sweet-config).
 
-### Usage
+### Required Setup
 
-**Required:** Generate a gist using [ballin-scripts](https://github.com/JBallin/ballin-scripts).
+Generate a gist using [ballin-scripts](https://github.com/JBallin/ballin-scripts):
+
+```shell
+$ bash <(curl -s https://raw.githubusercontent.com/JBallin/ballin-scripts/master/install.sh)
+$ gu
+```
+
+### Usage
 
 ```shell
 $ npm install
 $ echo "GIST_ID=$(ballin_config get gu.id)" >> .env
-$ createdb sweet_dev && createdb sweet_test
+$ createdb sweet_dev
+$ createdb sweet_test
 $ npm run seed-dev
 $ npm run dev
 ```
