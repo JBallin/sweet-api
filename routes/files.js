@@ -6,7 +6,7 @@ router.get('/', async (req, res) => {
   try {
     const getCategorizedFiles = () => knex('file_types')
       .join('categories', 'file_types.category_id', 'categories.id')
-      .select('categories.title AS category', 'file_types.title AS title', 'file_types.extension AS extension');
+      .select('categories.id AS id', 'categories.title AS category', 'file_types.title AS title', 'file_types.extension AS extension');
 
     let gistID;
     const getGistFiles = async () => {
@@ -16,21 +16,30 @@ router.get('/', async (req, res) => {
       return fetchGistFiles(gistID);
     };
 
-    const [categorizedFiles, gistFiles] = await Promise.all([
-      getCategorizedFiles(), getGistFiles(),
+    const getCategories = () => knex('categories');
+
+    const [categorizedFiles, gistFiles, categories] = await Promise.all([
+      getCategorizedFiles(), getGistFiles(), getCategories(),
     ]);
 
-    const files = categorizedFiles.reduce((result, { category, title, extension }) => {
+    const files = categorizedFiles.reduce((result, {
+      category, title, extension, id,
+    }) => {
       const rez = result;
       const newFile = { title, extension };
-      if (gistFiles.includes(title + extension)) {
-        const i = rez.findIndex(e => Object.keys(e)[0] === category);
+      const newFileName = title + extension;
+      if (gistFiles.includes(newFileName)) {
+        const i = rez.findIndex(cat => cat.category === category);
         if (i === -1) {
-          const newCategory = {};
-          newCategory[category] = [newFile];
+          const newCategory = {
+            id,
+            category,
+            files: [],
+          };
+          newCategory.files.push(newFile);
           rez.push(newCategory);
         } else {
-          rez[i][category].push(newFile);
+          rez[i].files.push(newFile);
         }
       }
       return rez;
