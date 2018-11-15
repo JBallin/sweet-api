@@ -12,6 +12,7 @@ const fileTypesRouter = require('./routes/fileTypes');
 const filesRouter = require('./routes/files');
 
 const app = express();
+app.disable('x-powered-by');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
