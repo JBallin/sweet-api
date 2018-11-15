@@ -8,5 +8,6 @@ exports.seed = knex => (
       { title: 'Atom' },
       { title: 'VS Code' },
       { title: 'Text Editors' },
+      { title: 'Other' },
     ]))
 );
