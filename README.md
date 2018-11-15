@@ -13,7 +13,7 @@ $ gu
 
 ```shell
 $ npm install
-$ echo "GIST_ID=$(ballin_config get gu.id)" >> .env
+$ echo "GIST_ID=$(ballin_config get gu.id)" > .env
 $ createdb sweet_dev
 $ createdb sweet_test
 $ npm run seed-dev
