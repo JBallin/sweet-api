@@ -9,7 +9,6 @@ async function fetchGistFiles(gistID) {
     const gist = await gistFetch.json();
     const { message } = gist;
     if (message) {
-      console.error(message); // eslint-disable-line no-console
       if (message.includes('rate limit')) throw Error('GitHub API rate limit exceeded');
       else throw Error(message);
     }
