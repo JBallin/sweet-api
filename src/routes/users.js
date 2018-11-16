@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const knex = require('../knex');
+const knex = require('../../knex');
 const { createError } = require('../utils/errors');
 
 router.get('/', (req, res, next) => {
