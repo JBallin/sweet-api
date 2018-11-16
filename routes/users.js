@@ -1,13 +1,11 @@
 const router = require('express').Router();
 const knex = require('../knex');
+const { createError } = require('../utils/errors');
 
 router.get('/', (req, res) => {
   knex('users')
     .then(users => res.json(users))
-    .catch((err) => {
-      console.error(err); // eslint-disable-line no-console
-      res.status(500).send('Error fetching users table');
-    });
+    .catch(err => next(createError(500, 'Error fetching users table', err)));
 });
 
 module.exports = router;
