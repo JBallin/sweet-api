@@ -1,11 +1,13 @@
 const fetch = require('node-fetch');
 
 const gistAPI = 'https://api.github.com/gists';
+const { GITHUB_TOKEN } = process.env;
+const token = GITHUB_TOKEN ? `access_token=${GITHUB_TOKEN}` : '';
 
 async function fetchGistFiles(gistID) {
   let files = [];
   if (gistID) {
-    const gistFetch = await fetch(`${gistAPI}/${gistID}`);
+    const gistFetch = await fetch(`${gistAPI}/${gistID}?${token}`);
     const gist = await gistFetch.json();
     const { message } = gist;
     if (message) {
