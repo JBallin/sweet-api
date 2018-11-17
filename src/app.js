@@ -5,11 +5,11 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 require('dotenv').config();
 
-const indexRouter = require('./src/routes/index');
-const usersRouter = require('./src/routes/users');
-const categoriesRouter = require('./src/routes/categories');
-const fileTypesRouter = require('./src/routes/fileTypes');
-const filesRouter = require('./src/routes/files');
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const categoriesRouter = require('./routes/categories');
+const fileTypesRouter = require('./routes/fileTypes');
+const filesRouter = require('./routes/files');
 
 const app = express();
 app.disable('x-powered-by');
