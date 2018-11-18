@@ -162,4 +162,31 @@ describe('/users/:id', () => {
     });
   });
 });
+
+describe('DELETE', () => {
+  it('should delete user', (done) => {
+    request(app)
+      .delete('/users/1')
+      .expect(204)
+      .end((err) => {
+        if (err) return done(err);
+        return knex('users')
+          .where('id', 1)
+          .then((res) => {
+            assert.lengthOf(res, 0);
+          })
+          .then(done);
+      });
+  });
+  it('should error with non-existent ID', (done) => {
+    request(app)
+      .delete('/users/0')
+      .expect(400)
+      .expect('Content-Type', /html/)
+      .end((err, res) => {
+        if (err) return done(err);
+        assert.equal(res.text, 'ERROR: No user with ID \'0\'');
+        return done();
+      });
+  });
 });
