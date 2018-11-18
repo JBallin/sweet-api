@@ -1,6 +1,6 @@
 const request = require('supertest');
-const app = require('../app');
 const knex = require('../knex');
+const app = require('../src/app');
 
 describe('categories', () => {
   beforeEach(() => knex.migrate.rollback()

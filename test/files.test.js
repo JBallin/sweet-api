@@ -1,8 +1,8 @@
 /* eslint-disable prefer-arrow-callback, func-names */
 
 const request = require('supertest');
-const app = require('../app');
 const knex = require('../knex');
+const app = require('../src/app');
 
 describe('files', () => {
   beforeEach(function () {
