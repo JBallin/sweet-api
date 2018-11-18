@@ -78,8 +78,41 @@ describe('/users', () => {
   });
 });
 
+describe('/users/:id', () => {
+  describe('GET', () => {
+    it('should return user', (done) => {
+      request(app)
+        .get('/users/1')
+        .expect(200)
         .expect('Content-Type', /json/)
-        .expect(200, done);
+        .end((err, res) => {
+          if (err) return done(err);
+          assert.equal(res.body.name, seeds[0].name);
+          assert.equal(res.body.username, seeds[0].username);
+          return done();
+        });
+    });
+    it('should error with invalid ID', (done) => {
+      request(app)
+        .get('/users/hello')
+        .expect(400)
+        .expect('Content-Type', /html/)
+        .end((err, res) => {
+          if (err) return done(err);
+          assert.equal(res.text, 'ERROR: ID \'hello\' is not a number');
+          return done();
+        });
+    });
+    it('should error with non-existent ID', (done) => {
+      request(app)
+        .get('/users/0')
+        .expect(400)
+        .expect('Content-Type', /html/)
+        .end((err, res) => {
+          if (err) return done(err);
+          assert.equal(res.text, 'ERROR: No user with ID \'0\'');
+          return done();
+        });
     });
   });
 });
