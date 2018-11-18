@@ -115,4 +115,51 @@ describe('/users/:id', () => {
         });
     });
   });
+
+  describe('PUT', () => {
+    it('should update user', (done) => {
+      request(app)
+        .put('users/1')
+        .send(seedUser1)
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .end((err) => {
+          if (err) return done(err);
+          return knex('users')
+            .where('id', 1)
+            .first()
+            .then((user) => {
+              assert.equal(seedUser1.username, user.username);
+              assert.equal(seedUser1.name, user.name);
+              assert.equal(user.id, 1);
+              assert.notDeepEqual(user.created_at, user.updated_at);
+              return done();
+            });
+        });
+    });
+    it('should error with empty body', (done) => {
+      request(app)
+        .put('/users/1')
+        .expect(400)
+        .expect('Content-Type', /html/)
+        .end((err, res) => {
+          if (err) return done(err);
+          assert.equal(res.text, 'ERROR: Invalid body');
+          return done();
+        });
+    });
+    it('should error with non-existent ID', (done) => {
+      request(app)
+        .put('users/0')
+        .send(seedUser1)
+        .expect(400)
+        .expect('Content-Type', /html/)
+        .end((err, res) => {
+          if (err) return done(err);
+          assert.equal(res.text, 'ERROR: No user with ID \'0\'');
+          return done();
+        });
+    });
+  });
+});
 });
