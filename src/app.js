@@ -10,6 +10,7 @@ const usersRouter = require('./routes/users');
 const categoriesRouter = require('./routes/categories');
 const fileTypesRouter = require('./routes/fileTypes');
 const filesRouter = require('./routes/files');
+const validateGistRouter = require('./routes/validateGist');
 
 const app = express();
 app.disable('x-powered-by');
@@ -34,6 +35,7 @@ app.use('/users', usersRouter);
 app.use('/categories', categoriesRouter);
 app.use('/fileTypes', fileTypesRouter);
 app.use('/files', filesRouter);
+app.use('/validateGist', validateGistRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
