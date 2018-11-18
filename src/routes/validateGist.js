@@ -1,5 +1,5 @@
 const express = require('express');
-const { isValidGist } = require('../api/gist');
+const { isValidGist } = require('../utils/gistAPI');
 
 const router = express.Router();
 

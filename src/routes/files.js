@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const knex = require('../../knex');
-const { fetchGistFiles } = require('../api/gist');
+const { fetchGistFiles } = require('../utils/gistAPI');
 const { createError } = require('../utils/errors');
 
 router.get('/', async (req, res, next) => {
