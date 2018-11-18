@@ -2,6 +2,7 @@
 
 const { assert } = require('chai');
 const { fetchGistFiles } = require('../src/api/gist');
+require('dotenv').load();
 
 const gistId = process.env.GIST_ID;
 
