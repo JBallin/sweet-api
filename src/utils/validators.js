@@ -5,7 +5,7 @@ const validateUser = (req, res, next) => {
   const { body } = req;
   if (!body) return next(createError(400, 'No user body sent').error);
 
-  const expectedFields = ['gistId', 'username', 'name', 'password'].sort();
+  const expectedFields = ['gist_id', 'name', 'email', 'username', 'password'].sort();
   const missingFields = expectedFields.reduce((missing, field) => {
     if (!body[field]) missing.push(field);
     return missing;

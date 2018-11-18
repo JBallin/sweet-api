@@ -5,11 +5,10 @@ const { seeds } = require('../seeds/001users');
 const knex = require('../knex');
 
 const seedUser1 = {
-  username: 'super_coder',
+  gist_id: 1234,
   name: 'Linus Torvalds',
   email: 'git_creator@gmai.com',
-  id: 2,
-  gistId: 1234,
+  username: 'super_coder',
   password: 'hello',
 };
 
