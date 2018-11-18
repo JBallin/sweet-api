@@ -5,7 +5,6 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 require('dotenv').config();
 
-const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const categoriesRouter = require('./routes/categories');
 const fileTypesRouter = require('./routes/fileTypes');
@@ -14,10 +13,6 @@ const validateGistRouter = require('./routes/validateGist');
 
 const app = express();
 app.disable('x-powered-by');
-
-// view engine setup
-app.set('views', path.join(__dirname, '..', 'views'));
-app.set('view engine', 'ejs');
 
 if (!process.env.NODE_ENV) app.use(logger('dev'));
 app.use(express.json());
@@ -30,7 +25,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/categories', categoriesRouter);
 app.use('/fileTypes', fileTypesRouter);
