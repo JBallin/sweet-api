@@ -1,12 +1,7 @@
 const request = require('supertest');
-const knex = require('../knex');
 const app = require('../src/app');
 
 describe('users', () => {
-  beforeEach(() => knex.migrate.rollback()
-    .then(() => knex.migrate.latest())
-    .then(() => knex.seed.run()));
-
   it('should return JSON', (done) => {
     request(app)
       .get('/users')
