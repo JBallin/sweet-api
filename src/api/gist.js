@@ -9,6 +9,11 @@ async function fetchGist(gistId) {
   return gistJSON.json();
 }
 
+async function isValidGist(gistId) {
+  const gist = await fetchGist(gistId);
+  return gist.message !== 'Not Found';
+}
+
 async function fetchGistFiles(gistId) {
   let files = [];
   if (gistId) {
@@ -23,4 +28,5 @@ async function fetchGistFiles(gistId) {
   return files;
 }
 
-module.exports = fetchGistFiles;
+
+module.exports = { fetchGistFiles, isValidGist };
