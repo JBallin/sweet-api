@@ -1,7 +1,7 @@
 /* eslint-disable prefer-arrow-callback, func-names */
 
 const { assert } = require('chai');
-const fetchGistFiles = require('../src/api/gist');
+const { fetchGistFiles } = require('../src/api/gist');
 
 const gistId = process.env.GIST_ID;
 
