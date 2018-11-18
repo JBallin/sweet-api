@@ -6,6 +6,7 @@ exports.up = knex => (
     table.string('email').unique().notNullable();
     table.string('hashed_pwd').notNullable();
     table.string('gist_id', 32).defaultTo(null);
+    table.timestamps(true, true);
   })
 );
 
