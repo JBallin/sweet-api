@@ -1,11 +1,12 @@
 const knex = require('../../knex');
 const { createError } = require('./errors');
 
+const expectedFields = ['gist_id', 'name', 'email', 'username', 'password'];
+
 const validateUser = (req, res, next) => {
   const { body } = req;
   if (!body) return next(createError(400, 'No user body sent').error);
 
-  const expectedFields = ['gist_id', 'name', 'email', 'username', 'password'];
   const missingFields = expectedFields.reduce((missing, field) => {
     if (!body[field]) {
       missing.push(field);
@@ -18,7 +19,7 @@ const validateUser = (req, res, next) => {
 
   const remainingBodyKeys = Object.keys(body).filter(k => !expectedFields.includes(k));
   if (remainingBodyKeys.length) {
-    return next(createError(400, `Received extra fields: ${remainingBodyKeys.join(', ').trim(',')}.`).error);
+    return next(createError(400, `Extra fields: ${remainingBodyKeys.join(', ').trim(',')}.`).error);
   }
 
   return next();
