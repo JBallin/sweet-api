@@ -120,7 +120,7 @@ describe('/users/:id', () => {
   describe('PUT', () => {
     it('should update user', (done) => {
       request(app)
-        .put('users/1')
+        .put('/users/1')
         .send(payload)
         .expect(200)
         .expect('Content-Type', /json/)
@@ -151,7 +151,7 @@ describe('/users/:id', () => {
     });
     it('should error with non-existent ID', (done) => {
       request(app)
-        .put('users/0')
+        .put('/users/0')
         .send(payload)
         .expect(400)
         .expect('Content-Type', /json/)
