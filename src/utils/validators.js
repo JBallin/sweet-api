@@ -25,6 +25,19 @@ const validateUser = (req, res, next) => {
   return next();
 };
 
+const validateUserUpdate = (req, res, next) => {
+  const invalidFields = Object.keys(req.body).reduce((invalid, field) => {
+    if (!expectedFields.includes(field)) {
+      invalid.push(field);
+    }
+    return invalid;
+  }, []);
+  if (invalidFields.length) {
+    return next(createError(400, `Invalid fields: ${invalidFields.join(', ').trim(',')}.`).error);
+  }
+  return next();
+};
+
 const validateId = async (req, res, next) => {
   const { id } = req.params;
   if (Number.isNaN(Number(id))) {
@@ -35,4 +48,4 @@ const validateId = async (req, res, next) => {
   return next();
 };
 
-module.exports = { validateUser, validateId };
+module.exports = { validateUser, validateId, validateUserUpdate };
