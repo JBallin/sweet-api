@@ -45,10 +45,10 @@ describe('/users', () => {
       request(app)
         .post('/users')
         .expect(400)
-        .expect('Content-Type', /html/)
+        .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(err);
-          assert.equal(res.text, 'ERROR: Invalid body');
+          assert.deepEqual(res.body.error, 'Missing fields: gist_id, name, email, username, password.');
           return done();
         });
     });
@@ -57,10 +57,10 @@ describe('/users', () => {
         .post('/users')
         .send({ ...payload, password: 'hello', extra: 'hi' })
         .expect(400)
-        .expect('Content-Type', /html/)
+        .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(err);
-          assert.equal(res.text, 'ERROR: Invalid body');
+          assert.equal(res.body.error, 'Received extra fields: extra.');
           return done();
         });
     });
@@ -85,10 +85,10 @@ describe('/users/:id', () => {
       request(app)
         .get('/users/hello')
         .expect(400)
-        .expect('Content-Type', /html/)
+        .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(err);
-          assert.equal(res.text, 'ERROR: ID \'hello\' is not a number');
+          assert.equal(res.body.error, 'ID \'hello\' is not a number');
           return done();
         });
     });
@@ -96,10 +96,10 @@ describe('/users/:id', () => {
       request(app)
         .get('/users/0')
         .expect(400)
-        .expect('Content-Type', /html/)
+        .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(err);
-          assert.equal(res.text, 'ERROR: No user with ID \'0\'');
+          assert.equal(res.body.error, 'No user with ID \'0\'');
           return done();
         });
     });
@@ -130,10 +130,10 @@ describe('/users/:id', () => {
       request(app)
         .put('/users/1')
         .expect(400)
-        .expect('Content-Type', /html/)
+        .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(err);
-          assert.equal(res.text, 'ERROR: Invalid body');
+          assert.equal(res.body.error, 'Invalid body');
           return done();
         });
     });
@@ -142,10 +142,10 @@ describe('/users/:id', () => {
         .put('users/0')
         .send(payload)
         .expect(400)
-        .expect('Content-Type', /html/)
+        .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(err);
-          assert.equal(res.text, 'ERROR: No user with ID \'0\'');
+          assert.equal(res.body.error, 'No user with ID \'0\'');
           return done();
         });
     });
@@ -171,10 +171,10 @@ describe('DELETE', () => {
     request(app)
       .delete('/users/0')
       .expect(400)
-      .expect('Content-Type', /html/)
+      .expect('Content-Type', /json/)
       .end((err, res) => {
         if (err) return done(err);
-        assert.equal(res.text, 'ERROR: No user with ID \'0\'');
+        assert.equal(res.body.error, 'No user with ID \'0\'');
         return done();
       });
   });
