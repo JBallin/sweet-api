@@ -14,12 +14,12 @@ const validateUser = (req, res, next) => {
     return missing;
   }, []);
   if (missingFields.length) {
-    return next(createError(400, `Missing fields: ${missingFields.join(', ').trim(',')}.`).error);
+    return next(createError(400, `Missing fields: ${missingFields.join(', ').trim(',')}`).error);
   }
 
   const remainingBodyKeys = Object.keys(body).filter(k => !expectedFields.includes(k));
   if (remainingBodyKeys.length) {
-    return next(createError(400, `Extra fields: ${remainingBodyKeys.join(', ').trim(',')}.`).error);
+    return next(createError(400, `Extra fields: ${remainingBodyKeys.join(', ').trim(',')}`).error);
   }
 
   return next();
@@ -33,7 +33,7 @@ const validateUserUpdate = (req, res, next) => {
     return invalid;
   }, []);
   if (invalidFields.length) {
-    return next(createError(400, `Invalid fields: ${invalidFields.join(', ').trim(',')}.`).error);
+    return next(createError(400, `Invalid fields: ${invalidFields.join(', ').trim(',')}`).error);
   }
   return next();
 };
