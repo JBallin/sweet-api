@@ -13,7 +13,7 @@ const validateUser = (req, res, next) => {
     return missing;
   }, []);
   if (missingFields.length) {
-    return next(createError(400, { missingFields }).error);
+    return next(createError(400, `Missing fields: ${missingFields.join(', ').trim(',')}.`).error);
   }
 
   const remainingBodyKeys = Object.keys(body).filter(k => !expectedFields.includes(k));
