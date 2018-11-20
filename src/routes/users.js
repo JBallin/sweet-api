@@ -1,11 +1,13 @@
-const router = require('express').Router();
-const knex = require('../../knex');
-const { createError } = require('../utils/errors');
+const express = require('express');
+const ctrl = require('../controllers/users');
+const { validateUser, validateId } = require('../utils/validators');
 
-router.get('/', (req, res, next) => {
-  knex('users').select('id', 'username', 'name')
-    .then(users => res.json(users))
-    .catch(err => next(createError(500, 'Error fetching users table', err)));
-});
+const router = express.Router();
+
+router.get('/', ctrl.getAllUsers);
+router.get('/:id', validateId, ctrl.getUser);
+router.post('/', validateUser, ctrl.createUser);
+router.put('/:id', validateId, validateUser, ctrl.editUser);
+router.delete('/:id', validateId, ctrl.deleteUser);
 
 module.exports = router;
