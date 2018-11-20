@@ -4,18 +4,11 @@ const app = require('../src/app');
 const { seeds } = require('../seeds/001users');
 const knex = require('../knex');
 
-const seedUser1 = {
-  gist_id: 1234,
+const payload = {
+  gist_id: '1234',
   name: 'Linus Torvalds',
-  email: 'git_creator@gmai.com',
+  email: 'git_creator@gmail.com',
   username: 'super_coder',
-  password: 'hello',
-};
-
-const badUser = {
-  nombre: 'paul',
-  content: 'this thing on?',
-  followup: 'anyone there?',
 };
 
 describe('/users', () => {
@@ -39,15 +32,12 @@ describe('/users', () => {
     it('should create user', (done) => {
       request(app)
         .post('/users')
-        .send(seedUser1)
+        .send({ ...payload, password: 'hello' })
         .expect(201)
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(err);
-          const { username, name } = seedUser1;
-          assert.deepEqual(res.body, {
-            username, name, id: seeds.length,
-          });
+          assert.deepEqual(res.body, payload);
           return done();
         });
     });
@@ -65,7 +55,7 @@ describe('/users', () => {
     it('should error with invalid body', (done) => {
       request(app)
         .post('/users')
-        .send(badUser)
+        .send({ ...payload, password: 'hello', extra: 'hi' })
         .expect(400)
         .expect('Content-Type', /html/)
         .end((err, res) => {
@@ -119,7 +109,7 @@ describe('/users/:id', () => {
     it('should update user', (done) => {
       request(app)
         .put('users/1')
-        .send(seedUser1)
+        .send(payload)
         .expect(200)
         .expect('Content-Type', /json/)
         .end((err) => {
@@ -128,8 +118,8 @@ describe('/users/:id', () => {
             .where('id', 1)
             .first()
             .then((user) => {
-              assert.equal(seedUser1.username, user.username);
-              assert.equal(seedUser1.name, user.name);
+              assert.equal(payload.username, user.username);
+              assert.equal(payload.name, user.name);
               assert.equal(user.id, 1);
               assert.notDeepEqual(user.created_at, user.updated_at);
               return done();
@@ -150,7 +140,7 @@ describe('/users/:id', () => {
     it('should error with non-existent ID', (done) => {
       request(app)
         .put('users/0')
-        .send(seedUser1)
+        .send(payload)
         .expect(400)
         .expect('Content-Type', /html/)
         .end((err, res) => {
