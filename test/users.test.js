@@ -41,6 +41,18 @@ describe('/users', () => {
           return done();
         });
     });
+    it('should error with missing fields', (done) => {
+      request(app)
+        .post('/users')
+        .send(payload)
+        .expect(400)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) return done(err);
+          assert.deepEqual(res.body.error, 'Missing fields: password');
+          return done();
+        });
+    });
     it('should error with empty body', (done) => {
       request(app)
         .post('/users')
@@ -48,11 +60,11 @@ describe('/users', () => {
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(err);
-          assert.deepEqual(res.body.error, 'Missing fields: gist_id, name, email, username, password.');
+          assert.deepEqual(res.body.error, 'No body');
           return done();
         });
     });
-    it('should error with invalid body', (done) => {
+    it('should error with extra fields', (done) => {
       request(app)
         .post('/users')
         .send({ ...payload, password: 'hello', extra: 'hi' })
@@ -60,7 +72,7 @@ describe('/users', () => {
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(err);
-          assert.equal(res.body.error, 'Received extra fields: extra.');
+          assert.equal(res.body.error, 'Received extra fields: extra');
           return done();
         });
     });
@@ -133,7 +145,7 @@ describe('/users/:id', () => {
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(err);
-          assert.equal(res.body.error, 'Invalid body');
+          assert.equal(res.body.error, 'No body');
           return done();
         });
     });
