@@ -27,7 +27,11 @@ const validateUser = (req, res, next) => {
 };
 
 const validateUserUpdate = (req, res, next) => {
-  const invalidFields = Object.keys(req.body).reduce((invalid, field) => {
+  const { body } = req;
+  const bodyKeys = Object.keys(body);
+  if (!bodyKeys.length) return next(createError(400, 'No body').error);
+
+  const invalidFields = Object.keys(body).reduce((invalid, field) => {
     if (!expectedFields.includes(field)) {
       invalid.push(field);
     }
