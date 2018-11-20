@@ -5,18 +5,20 @@ const validateUser = (req, res, next) => {
   const { body } = req;
   if (!body) return next(createError(400, 'No user body sent').error);
 
-  const expectedFields = ['gist_id', 'name', 'email', 'username', 'password'].sort();
+  const expectedFields = ['gist_id', 'name', 'email', 'username', 'password'];
   const missingFields = expectedFields.reduce((missing, field) => {
-    if (!body[field]) missing.push(field);
+    if (!body[field]) {
+      missing.push(field);
+    }
     return missing;
   }, []);
   if (missingFields.length) {
     return next(createError(400, { missingFields }).error);
   }
 
-  const bodyKeys = Object.keys(body).sort();
-  if (bodyKeys.length !== expectedFields.length) {
-    return next(createError(400, `Invalid body. Expected: ${expectedFields}. Received: ${bodyKeys}`).error);
+  const remainingBodyKeys = Object.keys(body).filter(k => !expectedFields.includes(k));
+  if (remainingBodyKeys.length) {
+    return next(createError(400, `Received extra fields: ${remainingBodyKeys.join(', ').trim(',')}.`).error);
   }
 
   return next();
