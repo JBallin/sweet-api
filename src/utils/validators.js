@@ -5,7 +5,8 @@ const expectedFields = ['gist_id', 'name', 'email', 'username', 'password'];
 
 const validateUser = (req, res, next) => {
   const { body } = req;
-  if (!body) return next(createError(400, 'No user body sent').error);
+  const bodyKeys = Object.keys(body);
+  if (!bodyKeys.length) return next(createError(400, 'No body').error);
 
   const missingFields = expectedFields.reduce((missing, field) => {
     if (!body[field]) {
@@ -17,7 +18,7 @@ const validateUser = (req, res, next) => {
     return next(createError(400, `Missing fields: ${missingFields.join(', ').trim(',')}`).error);
   }
 
-  const remainingBodyKeys = Object.keys(body).filter(k => !expectedFields.includes(k));
+  const remainingBodyKeys = bodyKeys.filter(k => !expectedFields.includes(k));
   if (remainingBodyKeys.length) {
     return next(createError(400, `Extra fields: ${remainingBodyKeys.join(', ').trim(',')}`).error);
   }
