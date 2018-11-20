@@ -72,7 +72,7 @@ describe('/users', () => {
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(err);
-          assert.equal(res.body.error, 'Received extra fields: extra');
+          assert.equal(res.body.error, 'Extra fields: extra');
           return done();
         });
     });
