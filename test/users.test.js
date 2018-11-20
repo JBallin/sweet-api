@@ -161,6 +161,18 @@ describe('/users/:id', () => {
           return done();
         });
     });
+    it('should error with invalid fields', (done) => {
+      request(app)
+        .put('/users/1')
+        .send({ ...payload, bad: 'field' })
+        .expect(400)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) return done(err);
+          assert.equal(res.body.error, 'Invalid fields: bad');
+          return done();
+        });
+    });
   });
   describe('DELETE', () => {
     it('should delete user', (done) => {
