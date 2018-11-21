@@ -3,7 +3,7 @@ const model = require('../models/users');
 const getAllUsers = async (req, res, next) => {
   const users = await model.getAllUsers();
   if (users.error) next(users.error);
-  res.json(users);
+  else res.json(users);
 };
 
 const getUser = async (req, res, next) => {
