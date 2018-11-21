@@ -11,6 +11,8 @@ const payload = {
   username: 'super_coder',
 };
 
+const payloadWithPassword = { ...payload, password: 'hello' };
+
 describe('/users', () => {
   describe('GET', () => {
     it('should return users', (done) => {
@@ -32,7 +34,7 @@ describe('/users', () => {
     it('should create user', (done) => {
       request(app)
         .post('/users')
-        .send({ ...payload, password: 'hello' })
+        .send(payloadWithPassword)
         .expect(201)
         .expect('Content-Type', /json/)
         .end((err, res) => {
@@ -67,7 +69,7 @@ describe('/users', () => {
     it('should error with extra fields', (done) => {
       request(app)
         .post('/users')
-        .send({ ...payload, password: 'hello', extra: 'hi' })
+        .send({ ...payloadWithPassword, extra: 'hi' })
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
