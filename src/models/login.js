@@ -3,7 +3,7 @@ const knex = require('../../knex');
 const { createError } = require('../utils/errors');
 
 const login = async ({ email, password }) => {
-  const loginErr = createError(400, 'Invalid credentials. Please try again.');
+  const loginErr = createError(401, 'Invalid credentials. Please try again.');
   let user;
   let isPasswordValid;
   try {

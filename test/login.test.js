@@ -29,7 +29,7 @@ describe('/login', () => {
       request(app)
         .post('/login')
         .send(invalid)
-        .expect(400)
+        .expect(401)
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(err);
