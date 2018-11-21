@@ -11,7 +11,7 @@ async function fetchGist(gistId) {
 
 async function isValidGist(gistId) {
   const gist = await fetchGist(gistId);
-  return gist.message !== 'Not Found';
+  return !!gist.files && !!gist.files['.MyConfig.md'];
 }
 
 async function fetchGistFiles(gistId) {
