@@ -54,4 +54,15 @@ const validateId = async (req, res, next) => {
   return next();
 };
 
-module.exports = { validateUser, validateId, validateUserUpdate };
+const validateLogin = (req, res, next) => {
+  const { email, password } = req;
+  if (!email || !password) {
+    return next(createError(400, 'Missing email or password').error);
+  }
+  req.email = req.email.toLowerCase();
+  return next();
+};
+
+module.exports = {
+  validateUser, validateId, validateUserUpdate, validateLogin,
+};
