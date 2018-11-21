@@ -5,7 +5,7 @@ const { seeds } = require('../seeds/001users');
 const knex = require('../knex');
 
 const payload = {
-  gist_id: '1234',
+  gist_id: 'f7217444324b91f926d01e1c02ce2755',
   name: 'Linus Torvalds',
   email: 'git_creator@gmail.com',
   username: 'super_coder',
