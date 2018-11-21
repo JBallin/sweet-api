@@ -55,11 +55,11 @@ const validateId = async (req, res, next) => {
 };
 
 const validateLogin = (req, res, next) => {
-  const { email, password } = req;
+  const { email, password } = req.body;
   if (!email || !password) {
     return next(createError(400, 'Missing email or password').error);
   }
-  req.email = req.email.toLowerCase();
+  req.body.email = req.body.email.toLowerCase();
   return next();
 };
 
