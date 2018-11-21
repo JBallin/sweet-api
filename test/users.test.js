@@ -78,6 +78,42 @@ describe('/users', () => {
           return done();
         });
     });
+    it('should error with existing email', (done) => {
+      request(app)
+        .post('/users')
+        .send({ ...payloadWithPassword, email: seeds[0].email })
+        .expect(400)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) return done(err);
+          assert.equal(res.body.error, `User with email '${seeds[0].email}' already exists`);
+          return done();
+        });
+    });
+    it('should error with existing username', (done) => {
+      request(app)
+        .post('/users')
+        .send({ ...payloadWithPassword, username: seeds[0].username })
+        .expect(400)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) return done(err);
+          assert.equal(res.body.error, `User with username '${seeds[0].username}' already exists`);
+          return done();
+        });
+    });
+    it('should error with existing gist_id', (done) => {
+      request(app)
+        .post('/users')
+        .send({ ...payloadWithPassword, gist_id: seeds[0].gist_id })
+        .expect(400)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) return done(err);
+          assert.equal(res.body.error, `User with gist_id '${seeds[0].gist_id}' already exists`);
+          return done();
+        });
+    });
   });
 });
 
