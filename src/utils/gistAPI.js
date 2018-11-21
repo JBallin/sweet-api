@@ -32,5 +32,13 @@ async function fetchGistFiles(gistId) {
   return files;
 }
 
+const validateGist = async (gistId) => {
+  const gist = await fetchGist(gistId);
+  if (gist.error) return gist;
+  const isValid = Boolean(gist.files && gist.files['.MyConfig.md']);
+  if (!isValid) return createError(400, 'Invalid ballin-scripts gist');
+  return { isValid };
+};
 
-module.exports = { fetchGistFiles, isValidGist };
+
+module.exports = { fetchGistFiles, fetchGist, validateGist };
