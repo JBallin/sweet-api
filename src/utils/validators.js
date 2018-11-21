@@ -22,6 +22,7 @@ const validateUser = (req, res, next) => {
   if (remainingBodyKeys.length) {
     return next(createError(400, `Extra fields: ${remainingBodyKeys.join(', ').trim(',')}`).error);
   }
+  req.body.email = req.body.email.toLowerCase();
 
   return next();
 };
