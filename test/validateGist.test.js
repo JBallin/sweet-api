@@ -28,5 +28,16 @@ describe('/validateGist/:gistId', () => {
           return done();
         });
     });
+    it('should return error when a valid gist but not valid ballin-scripts gist', (done) => {
+      request(app)
+        .get('/validateGist/1')
+        .expect(400)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) return done(err);
+          assert.equal(res.body.error, 'Invalid ballin-scripts gist');
+          return done();
+        });
+    });
   });
 });
