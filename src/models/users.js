@@ -17,3 +17,12 @@ const getUser = (id) => {
   }
 };
 
+const stripSensitiveData = (unstrippedUser) => {
+  const user = { ...unstrippedUser };
+  delete user.hashed_pwd;
+  delete user.created_at;
+  delete user.updated_at;
+  delete user.id;
+  return user;
+};
+
