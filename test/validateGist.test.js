@@ -17,14 +17,14 @@ describe('/validateGist/:gistId', () => {
           return done();
         });
     });
-    it('should return false when invalid', (done) => {
+    it('should return error when invalid', (done) => {
       request(app)
         .get('/validateGist/2')
-        .expect(200)
+        .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(err);
-          assert.isFalse(res.body.isValid);
+          assert.equal(res.body.error, 'No gist with id \'2\'');
           return done();
         });
     });
