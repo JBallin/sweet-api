@@ -1,5 +1,6 @@
 const knex = require('../../knex');
 const { createError } = require('./errors');
+const { validateGist } = require('./gistAPI');
 
 const expectedFields = ['gist_id', 'name', 'email', 'username', 'password'];
 
@@ -63,6 +64,15 @@ const validateLogin = (req, res, next) => {
   return next();
 };
 
+const validateGistId = async (req, res, next) => {
+  const result = await validateGist(req.body.gist_id);
+  if (result.error) {
+    next(result.error);
+  } else {
+    next();
+  }
+};
+
 module.exports = {
-  validateUser, validateId, validateUserUpdate, validateLogin,
+  validateUser, validateId, validateUserUpdate, validateLogin, validateGistId,
 };
