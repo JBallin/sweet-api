@@ -8,7 +8,8 @@ describe('/validateGist/:gistId', () => {
   describe('GET', () => {
     it('should return true when valid', (done) => {
       request(app)
-        .get(`/validateGist/${validGistId}`)
+        .post('/validateGist')
+        .send({ gistId: validGistId })
         .expect(200)
         .expect('Content-Type', /json/)
         .end((err, res) => {
@@ -19,7 +20,8 @@ describe('/validateGist/:gistId', () => {
     });
     it('should return error when invalid', (done) => {
       request(app)
-        .get('/validateGist/2')
+        .post('/validateGist')
+        .send({ gistId: 2 })
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
@@ -30,7 +32,8 @@ describe('/validateGist/:gistId', () => {
     });
     it('should return error when a valid gist but not valid ballin-scripts gist', (done) => {
       request(app)
-        .get('/validateGist/1')
+        .post('/validateGist')
+        .send({ gistId: 1 })
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
