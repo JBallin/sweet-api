@@ -42,5 +42,16 @@ describe('/validateGist/:gistId', () => {
           return done();
         });
     });
+    it('should return error when no gist id given', (done) => {
+      request(app)
+        .post('/validateGist')
+        .expect(400)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) return done(err);
+          assert.equal(res.body.error, 'No gist id provided');
+          return done();
+        });
+    });
   });
 });
