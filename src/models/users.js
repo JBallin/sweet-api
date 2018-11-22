@@ -26,3 +26,16 @@ const stripSensitiveData = (unstrippedUser) => {
   return user;
 };
 
+const testUniques = (body, users) => {
+  const uniques = ['gist_id', 'email', 'username'];
+  return users.reduce((uniqueErr, user) => {
+    let err;
+    uniques.forEach((unique) => {
+      if (!err && (body[unique] === user[unique])) {
+        err = `User with ${unique} '${body[unique]}' already exists`;
+      }
+    });
+    return err || uniqueErr;
+  }, '');
+};
+
