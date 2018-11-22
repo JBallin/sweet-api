@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const knex = require('../../knex');
 const { createError } = require('../utils/errors');
 
@@ -37,5 +38,22 @@ const testUniques = (body, users) => {
     });
     return err || uniqueErr;
   }, '');
+};
+
+const createUser = async (body) => {
+  try {
+    const users = await knex('users');
+    const uniqueErr = testUniques(body, users);
+    if (uniqueErr) return createError(400, uniqueErr);
+    const newUser = {
+      ...body,
+      hashed_pwd: bcrypt.hashSync(body.password, 10),
+    };
+    delete newUser.password;
+    const user = (await knex('users').insert(newUser, '*'))[0];
+    return stripSensitiveData(user);
+  } catch (err) {
+    return createError(500, err.message);
+  }
 };
 
