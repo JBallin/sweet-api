@@ -33,6 +33,7 @@ async function fetchGistFiles(gistId) {
 }
 
 const validateGist = async (gistId) => {
+  if (!gistId) return createError(400, 'No gist id provided');
   const gist = await fetchGist(gistId);
   if (gist.error) return gist;
   const isValid = Boolean(gist.files && gist.files['.MyConfig.md']);
