@@ -43,12 +43,11 @@ const testUniques = (body, users) => {
 const createUser = async (body) => {
   try {
     const users = await knex('users');
+    const email = body.email.toLowerCase();
+    const newUser = { id, ...body, email };
     const uniqueErr = testUniques(body, users);
     if (uniqueErr) return createError(400, uniqueErr);
-    const newUser = {
-      ...body,
-      hashed_pwd: bcrypt.hashSync(body.password, 10),
-    };
+    newUser.hashed_pwd = bcrypt.hashSync(body.password, 10);
     delete newUser.password;
     const user = (await knex('users').insert(newUser, '*'))[0];
     return stripSensitiveData(user);

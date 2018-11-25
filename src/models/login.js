@@ -7,7 +7,7 @@ const login = async ({ email, password }) => {
   let user;
   let isPasswordValid;
   try {
-    user = await knex('users').where('email', email).first();
+    user = await knex('users').where('email', email.toLowerCase()).first();
     if (!user) return loginErr;
   } catch (e) {
     return createError(500, 'Error fetching users', e);
