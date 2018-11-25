@@ -7,7 +7,10 @@ const expectedFields = ['gist_id', 'name', 'email', 'username', 'password'];
 const validateUser = (req, res, next) => {
   const { body } = req;
   const bodyKeys = Object.keys(body);
-  if (!bodyKeys.length) return next(createError(400, 'No body').error);
+  if (!bodyKeys.length) {
+    const err = createError(400, 'No body');
+    return next(err.error);
+  }
 
   const missingFields = expectedFields.reduce((missing, field) => {
     if (!body[field]) {
@@ -16,12 +19,14 @@ const validateUser = (req, res, next) => {
     return missing;
   }, []);
   if (missingFields.length) {
-    return next(createError(400, `Missing fields: ${missingFields.join(', ').trim(',')}`).error);
+    const err = createError(400, `Missing fields: ${missingFields.join(', ').trim(',')}`);
+    return next(err.error);
   }
 
   const remainingBodyKeys = bodyKeys.filter(k => !expectedFields.includes(k));
   if (remainingBodyKeys.length) {
-    return next(createError(400, `Extra fields: ${remainingBodyKeys.join(', ').trim(',')}`).error);
+    const err = createError(400, `Extra fields: ${remainingBodyKeys.join(', ').trim(',')}`);
+    return next(err.error);
   }
   req.body.email = req.body.email.toLowerCase();
 
@@ -31,7 +36,10 @@ const validateUser = (req, res, next) => {
 const validateUserUpdate = (req, res, next) => {
   const { body } = req;
   const bodyKeys = Object.keys(body);
-  if (!bodyKeys.length) return next(createError(400, 'No body').error);
+  if (!bodyKeys.length) {
+    const err = createError(400, 'No body');
+    return next(err.error);
+  }
 
   const invalidFields = Object.keys(body).reduce((invalid, field) => {
     if (!expectedFields.includes(field)) {
@@ -40,7 +48,8 @@ const validateUserUpdate = (req, res, next) => {
     return invalid;
   }, []);
   if (invalidFields.length) {
-    return next(createError(400, `Invalid fields: ${invalidFields.join(', ').trim(',')}`).error);
+    const err = createError(400, `Invalid fields: ${invalidFields.join(', ').trim(',')}`);
+    return next(err.error);
   }
   return next();
 };
@@ -51,14 +60,18 @@ const validateId = async (req, res, next) => {
     return next(createError(400, `ID '${id}' is not a number`).error);
   }
   const user = await knex('users').where('id', id).first();
-  if (!user) return next(createError(400, `No user with ID '${id}'`).error);
+  if (!user) {
+    const err = createError(400, `No user with ID '${id}'`);
+    return next(err.error);
+  }
   return next();
 };
 
 const validateLoginBody = (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    return next(createError(400, 'Missing email or password').error);
+    const err = createError(400, 'Missing email or password');
+    return next(err.error);
   }
   return next();
 };
