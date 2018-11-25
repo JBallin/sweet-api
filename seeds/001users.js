@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const seeds = [{
+  id: '1ee370d1-2ef3-4c0e-b0f3-6ffccc697dd0',
   gist_id: process.env.GIST_ID || 1,
   name: 'J Ballin',
   email: 'jballin@fake.com',
