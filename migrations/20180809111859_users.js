@@ -6,7 +6,7 @@ const up = knex => (
   knex.schema.createTable('users', (table) => {
     table.uuid('id').notNullable().primary();
     table.string('gist_id', gistIdLimit).unique().notNullable();
-    table.string('name', nameLimit).notNullable();
+    table.string('name', nameLimit);
     table.string('email').unique().notNullable();
     table.string('username', usernameLimit).unique().notNullable();
     table.string('hashed_pwd').notNullable();
