@@ -39,8 +39,14 @@ describe('/users', () => {
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(err);
-          assert.deepEqual(res.body, payload);
-          return done();
+          assert.equal(res.body.new_user, payload.username);
+          return knex('users')
+            .where('username', payload.username)
+            .first()
+            .then((user) => {
+              assert.equal(user.email, payload.email);
+            })
+            .then(done);
         });
     });
     it('should error with missing fields', (done) => {
