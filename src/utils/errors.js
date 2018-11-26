@@ -25,6 +25,8 @@ module.exports = {
   invalidLogin: createError(401, 'Invalid credentials. Please try again.'),
   bcrypt: e => createError(500, 'Error comparing password', e),
   updatePwd: createError(500, 'Error updating password'),
+  // LOGOUT
+  logout: e => createError(500, 'Error logging out', e),
   // GITHUB
   githubAPILimit: createError(500, 'GitHub API rate limit exceeded'),
   gistDNE: id => createError(400, `No gist with ID '${id}'`),
