@@ -25,7 +25,6 @@ const validateUser = (req, res, next) => {
   if (remainingBodyKeys.length) {
     return next(errors.extra(remainingBodyKeys).error);
   }
-  req.body.email = req.body.email.toLowerCase();
 
   return next();
 };
