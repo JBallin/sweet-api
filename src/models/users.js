@@ -45,7 +45,7 @@ const createUser = async (body) => {
     const [user] = await knex('users').insert(newUser, '*');
     return { new_user: user.username };
   } catch (err) {
-    return createError(500, err.message);
+    return createError(500, 'Error adding user to database', err);
   }
 };
 
