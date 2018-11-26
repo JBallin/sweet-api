@@ -31,5 +31,4 @@ module.exports = {
   gistErr: e => createError(500, 'Error fetching gist', e),
   noGistId: createError(400, 'No gist ID provided'),
   invalidBSGist: createError(400, 'Invalid ballin-scripts gist'),
-  emptyGist: createError(400, 'No files found in gist'),
 };

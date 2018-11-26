@@ -78,8 +78,7 @@ router.get('/', async (req, res, next) => {
     files.push(otherCategory);
   }
 
-  if (files.length) return res.json(files);
-  return next(errors.emptyGist.error);
+  return res.json(files);
 });
 
 module.exports = router;
