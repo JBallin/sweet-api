@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const uuid = require('uuid/v4');
 const knex = require('../../knex');
 const { createError } = require('../utils/errors');
 
@@ -34,6 +35,7 @@ const testUniques = (body, users) => {
 const createUser = async (body) => {
   try {
     const users = await knex('users');
+    const id = uuid();
     const email = body.email.toLowerCase();
     const newUser = { id, ...body, email };
     const uniqueErr = testUniques(body, users);
