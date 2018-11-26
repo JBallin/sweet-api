@@ -1,5 +1,5 @@
 const fetch = require('node-fetch');
-const { createError } = require('./errors');
+const errors = require('./errors');
 
 const gistAPI = 'https://api.github.com/gists';
 const { GITHUB_TOKEN } = process.env;
@@ -10,15 +10,17 @@ async function fetchGist(gistId) {
   const gistJSON = await fetch(gistAPIwithIdAndToken);
   const gist = await gistJSON.json();
   const { message } = gist;
+
   if (message) {
     if (message.includes('rate limit')) {
-      return createError(500, 'GitHub API rate limit exceeded');
+      return errors.githubAPILimit;
     }
     if (message === 'Not Found') {
-      return createError(400, `No gist with id '${gistId}'`);
+      return errors.gistDNE(gistId);
     }
-    return createError(500, 'Error fetching gist', message);
+    return errors.gistErr(message);
   }
+
   return gist;
 }
 
@@ -33,11 +35,19 @@ async function fetchGistFiles(gistId) {
 }
 
 const validateGist = async (gistId) => {
-  if (!gistId) return createError(400, 'No gist id provided');
+  if (!gistId) {
+    return errors.noGistId;
+  }
+
   const gist = await fetchGist(gistId);
-  if (gist.error) return gist;
+  if (gist.error) {
+    return gist;
+  }
+
   const isValid = Boolean(gist.files && gist.files['.MyConfig.md']);
-  if (!isValid) return createError(400, 'Invalid ballin-scripts gist');
+  if (!isValid) {
+    return errors.invalidBSGist;
+  }
   return { isValid };
 };
 

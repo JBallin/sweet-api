@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const knex = require('../../knex');
 const { fetchGistFiles } = require('../utils/gistAPI');
-const { createError } = require('../utils/errors');
+const errors = require('../utils/errors');
 
 router.get('/', async (req, res, next) => {
   const getCategorizedFiles = () => knex('file_types')
@@ -28,7 +28,9 @@ router.get('/', async (req, res, next) => {
     return next(e);
   }
 
-  if (!gistID) return next(createError(400, 'No gist ID provided').error);
+  if (!gistID) {
+    return next(errors.noGistId.error);
+  }
 
   const savedFiles = [];
 
@@ -77,7 +79,7 @@ router.get('/', async (req, res, next) => {
   }
 
   if (files.length) return res.json(files);
-  return next(createError(400, 'No files found in gist').error);
+  return next(errors.emptyGist.error);
 });
 
 module.exports = router;

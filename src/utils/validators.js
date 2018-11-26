@@ -1,6 +1,6 @@
 const knex = require('../../knex');
-const { createError } = require('./errors');
 const { validateGist } = require('./gistAPI');
+const errors = require('./errors');
 
 const expectedFields = ['gist_id', 'name', 'email', 'username', 'password'];
 
@@ -8,8 +8,7 @@ const validateUser = (req, res, next) => {
   const { body } = req;
   const bodyKeys = Object.keys(body);
   if (!bodyKeys.length) {
-    const err = createError(400, 'No body');
-    return next(err.error);
+    return next(errors.noBody.error);
   }
 
   const missingFields = expectedFields.reduce((missing, field) => {
@@ -19,14 +18,12 @@ const validateUser = (req, res, next) => {
     return missing;
   }, []);
   if (missingFields.length) {
-    const err = createError(400, `Missing fields: ${missingFields.join(', ').trim(',')}`);
-    return next(err.error);
+    return next(errors.missing(missingFields).error);
   }
 
   const remainingBodyKeys = bodyKeys.filter(k => !expectedFields.includes(k));
   if (remainingBodyKeys.length) {
-    const err = createError(400, `Extra fields: ${remainingBodyKeys.join(', ').trim(',')}`);
-    return next(err.error);
+    return next(errors.extra(remainingBodyKeys).error);
   }
   req.body.email = req.body.email.toLowerCase();
 
@@ -37,8 +34,7 @@ const validateUserUpdate = (req, res, next) => {
   const { body } = req;
   const bodyKeys = Object.keys(body);
   if (!bodyKeys.length) {
-    const err = createError(400, 'No body');
-    return next(err.error);
+    return next(errors.noBody.error);
   }
 
   const invalidFields = Object.keys(body).reduce((invalid, field) => {
@@ -48,8 +44,7 @@ const validateUserUpdate = (req, res, next) => {
     return invalid;
   }, []);
   if (invalidFields.length) {
-    const err = createError(400, `Invalid fields: ${invalidFields.join(', ').trim(',')}`);
-    return next(err.error);
+    return next(errors.invalid(invalidFields).error);
   }
   return next();
 };
@@ -62,27 +57,23 @@ const validateUUID = (id) => {
 const validateId = async (req, res, next) => {
   const { id } = req.params;
   if (!validateUUID(id)) {
-    const err = createError(400, `Invalid UUID '${id}'`);
-    return next(err.error);
+    return next(errors.uuid(id).error);
   }
   try {
     const user = await knex('users').where('id', id).first();
     if (!user) {
-      const err = createError(400, `No user with ID '${id}'`);
-      return next(err.error);
+      return next(errors.idDNE(id).error);
     }
     return next();
   } catch (e) {
-    const err = createError(500, 'Error fetching users table', e);
-    return next(err.error);
+    return next(errors.usersDB(e).error);
   }
 };
 
 const validateLoginBody = (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    const err = createError(400, 'Missing email or password');
-    return next(err.error);
+    return next(errors.missingLogin.error);
   }
   return next();
 };

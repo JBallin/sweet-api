@@ -1,23 +1,13 @@
 const bcrypt = require('bcrypt');
 const uuid = require('uuid/v4');
 const knex = require('../../knex');
-const { createError } = require('../utils/errors');
+const errors = require('../utils/errors');
 
-const getAllUsers = () => {
-  try {
-    return knex('users').select('username', 'name');
-  } catch (err) {
-    return createError(500, 'Error fetching users from database', err);
-  }
-};
+const getAllUsers = () => knex('users').select('username', 'name')
+  .catch(e => errors.usersDB(e));
 
-const getUser = (id) => {
-  try {
-    return knex('users').where('id', id).first();
-  } catch (err) {
-    return createError(500, 'Error fetching user from database', err);
-  }
-};
+const getUser = id => knex('users').where('id', id).first()
+  .catch(e => errors.userDB(e));
 
 const testUniques = (body, users) => {
   const uniques = ['id', 'gist_id', 'email', 'username'];
@@ -25,7 +15,7 @@ const testUniques = (body, users) => {
     let err;
     uniques.forEach((unique) => {
       if (!err && (body[unique] === user[unique])) {
-        err = `User with ${unique} '${body[unique]}' already exists`;
+        err = errors.unique(unique, body[unique]);
       }
     });
     return err || uniqueErr;
@@ -39,13 +29,13 @@ const createUser = async (body) => {
     const email = body.email.toLowerCase();
     const newUser = { id, ...body, email };
     const uniqueErr = testUniques(newUser, users);
-    if (uniqueErr) return createError(400, uniqueErr);
+    if (uniqueErr) return uniqueErr;
     newUser.hashed_pwd = bcrypt.hashSync(body.password, 10);
     delete newUser.password;
     const [user] = await knex('users').insert(newUser, '*');
     return { new_user: user.username };
-  } catch (err) {
-    return createError(500, 'Error adding user to database', err);
+  } catch (e) {
+    return errors.addUserDB(e);
   }
 };
 
@@ -69,11 +59,11 @@ const updateUser = async (id, body) => {
     if (editedUser.hashed_pwd) {
       userUpdates.password = 'UPDATED';
     } else if (userUpdates.password) {
-      return createError(500, 'Error updating password');
+      return errors.updatePwd;
     }
     return userUpdates;
-  } catch (err) {
-    return createError(500, 'Error updating user in database', err);
+  } catch (e) {
+    return errors.userUpdateDB(e);
   }
 };
 
