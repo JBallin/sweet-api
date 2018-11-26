@@ -6,7 +6,7 @@ const knex = require('../knex');
 
 const payload = {
   gist_id: 'f7217444324b91f926d01e1c02ce2755',
-  name: 'Linus Torvalds',
+  name: null,
   email: 'git_creator@gmail.com',
   username: 'super_coder',
 };
