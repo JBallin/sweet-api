@@ -4,6 +4,12 @@ const app = require('../src/app');
 
 const validGistId = 'f7217444324b91f926d01e1c02ce2755';
 
+const errors = {
+  gistDNE: id => `No gist with ID '${id}'`,
+  noGistId: 'No gist ID provided',
+  invalidBSGist: 'Invalid ballin-scripts gist',
+};
+
 describe('/validateGist/:gistId', () => {
   describe('GET', () => {
     it('should return true when valid', (done) => {
@@ -19,14 +25,15 @@ describe('/validateGist/:gistId', () => {
         });
     });
     it('should return error when invalid', (done) => {
+      const testId = '2';
       request(app)
         .post('/validateGist')
-        .send({ gistId: 2 })
+        .send({ gistId: testId })
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(err);
-          assert.equal(res.body.error, 'No gist with id \'2\'');
+          assert.equal(res.body.error, errors.gistDNE(testId));
           return done();
         });
     });
@@ -38,7 +45,7 @@ describe('/validateGist/:gistId', () => {
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(err);
-          assert.equal(res.body.error, 'Invalid ballin-scripts gist');
+          assert.equal(res.body.error, errors.invalidBSGist);
           return done();
         });
     });
@@ -49,7 +56,7 @@ describe('/validateGist/:gistId', () => {
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(err);
-          assert.equal(res.body.error, 'No gist id provided');
+          assert.equal(res.body.error, errors.noGistId);
           return done();
         });
     });

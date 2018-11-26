@@ -12,6 +12,11 @@ const valid = {
   password: 'hello',
 };
 
+const errors = {
+  missingLogin: 'Missing email or password',
+  invalidLogin: 'Invalid credentials. Please try again.',
+};
+
 describe('/login', () => {
   describe('POST', () => {
     it('should catch missing email/password', (done) => {
@@ -21,7 +26,7 @@ describe('/login', () => {
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(err);
-          assert.equal(res.body.error, 'Missing email or password');
+          assert.equal(res.body.error, errors.missingLogin);
           return done();
         });
     });
@@ -33,7 +38,7 @@ describe('/login', () => {
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(err);
-          assert.equal(res.body.error, 'Invalid credentials. Please try again.');
+          assert.equal(res.body.error, errors.invalidLogin);
           return done();
         });
     });
