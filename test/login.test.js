@@ -12,6 +12,8 @@ const valid = {
   password: 'hello',
 };
 
+const validUsername = 'JBallin';
+
 const errors = {
   missingLogin: 'Missing email or password',
   invalidLogin: 'Invalid credentials. Please try again.',
@@ -50,7 +52,7 @@ describe('/login', () => {
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(err);
-          assert.deepEqual(res.body, { validCredentials: true });
+          assert.deepEqual(res.body, { username: validUsername });
           return done();
         });
     });

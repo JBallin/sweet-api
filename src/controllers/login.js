@@ -1,9 +1,9 @@
 const model = require('../models/login');
 
 const login = async (req, res, next) => {
-  const attempt = await model.login(req.body);
-  if (attempt.error) next(attempt.error);
-  else res.json(attempt);
+  const user = await model.login(req.body);
+  if (user.error) next(user.error);
+  else res.json(user);
 };
 
 module.exports = { login };
