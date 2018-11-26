@@ -24,7 +24,7 @@ describe('/users', () => {
           if (err) return done(err);
           const { username, name } = seeds[0];
           assert.deepEqual(res.body[0], {
-            username, name, id: 1,
+            username, name,
           });
           return done();
         });
