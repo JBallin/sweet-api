@@ -18,15 +18,6 @@ const getUser = (id) => {
   }
 };
 
-const stripSensitiveData = (unstrippedUser) => {
-  const user = { ...unstrippedUser };
-  delete user.hashed_pwd;
-  delete user.created_at;
-  delete user.updated_at;
-  delete user.id;
-  return user;
-};
-
 const testUniques = (body, users) => {
   const uniques = ['gist_id', 'email', 'username'];
   return users.reduce((uniqueErr, user) => {
@@ -49,8 +40,8 @@ const createUser = async (body) => {
     if (uniqueErr) return createError(400, uniqueErr);
     newUser.hashed_pwd = bcrypt.hashSync(body.password, 10);
     delete newUser.password;
-    const user = (await knex('users').insert(newUser, '*'))[0];
-    return stripSensitiveData(user);
+    const [user] = await knex('users').insert(newUser, '*');
+    return { new_user: user.username };
   } catch (err) {
     return createError(500, err.message);
   }
