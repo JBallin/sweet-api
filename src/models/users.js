@@ -49,3 +49,31 @@ const createUser = async (body) => {
   }
 };
 
+const updateUser = async (id, body) => {
+  try {
+    const user = { ...body };
+    const updatedFields = Object.keys(user);
+    if (user.password) {
+      user.hashed_pwd = bcrypt.hashSync(user.password, 10);
+      delete user.password;
+    }
+    if (user.email) {
+      user.email = user.email.toLowerCase();
+    }
+    const [editedUser] = await knex('users').where('id', id).update({
+      ...user, updated_at: knex.fn.now(),
+    }, '*');
+    const userUpdates = updatedFields.reduce((res, field) => ({
+      ...res, [field]: editedUser[field],
+    }), {});
+    if (editedUser.hashed_pwd) {
+      userUpdates.password = 'UPDATED';
+    } else if (userUpdates.password) {
+      return createError(500, 'Error updating password');
+    }
+    return userUpdates;
+  } catch (err) {
+    return createError(500, 'Error updating user in database', err);
+  }
+};
+
