@@ -59,12 +59,17 @@ const validateId = async (req, res, next) => {
   if (Number.isNaN(Number(id))) {
     return next(createError(400, `ID '${id}' is not a number`).error);
   }
-  const user = await knex('users').where('id', id).first();
-  if (!user) {
-    const err = createError(400, `No user with ID '${id}'`);
+  try {
+    const user = await knex('users').where('id', id).first();
+    if (!user) {
+      const err = createError(400, `No user with ID '${id}'`);
+      return next(err.error);
+    }
+    return next();
+  } catch (e) {
+    const err = createError(500, 'Error fetching users table', e);
     return next(err.error);
   }
-  return next();
 };
 
 const validateLoginBody = (req, res, next) => {
