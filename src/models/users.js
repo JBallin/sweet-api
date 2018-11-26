@@ -7,7 +7,7 @@ const getAllUsers = () => {
   try {
     return knex('users').select('username', 'name');
   } catch (err) {
-    return createError(500, 'Error fetching users table', err);
+    return createError(500, 'Error fetching users from database', err);
   }
 };
 
@@ -15,7 +15,7 @@ const getUser = (id) => {
   try {
     return knex('users').where('id', id).first();
   } catch (err) {
-    return createError(500, 'Error fetching user', err);
+    return createError(500, 'Error fetching user from database', err);
   }
 };
 
