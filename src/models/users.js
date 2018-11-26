@@ -4,7 +4,7 @@ const { createError } = require('../utils/errors');
 
 const getAllUsers = () => {
   try {
-    return knex('users').select('id', 'username', 'name');
+    return knex('users').select('username', 'name');
   } catch (err) {
     return createError(500, 'Error fetching users table', err);
   }
