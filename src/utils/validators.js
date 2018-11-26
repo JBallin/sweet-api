@@ -54,10 +54,16 @@ const validateUserUpdate = (req, res, next) => {
   return next();
 };
 
+const validateUUID = (id) => {
+  const re = /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i;
+  return re.test(id);
+};
+
 const validateId = async (req, res, next) => {
   const { id } = req.params;
-  if (Number.isNaN(Number(id))) {
-    return next(createError(400, `ID '${id}' is not a number`).error);
+  if (!validateUUID(id)) {
+    const err = createError(400, `Invalid UUID '${id}'`);
+    return next(err.error);
   }
   try {
     const user = await knex('users').where('id', id).first();
