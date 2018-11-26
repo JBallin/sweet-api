@@ -221,8 +221,8 @@ describe('/users/:id', () => {
           if (err) return done(err);
           return knex('users')
             .where('id', 1)
-            .then((res) => {
-              assert.lengthOf(res, 0);
+            .then((user) => {
+              assert.lengthOf(user, 0);
             })
             .then(done);
         });
