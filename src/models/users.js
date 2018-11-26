@@ -20,7 +20,7 @@ const getUser = (id) => {
 };
 
 const testUniques = (body, users) => {
-  const uniques = ['gist_id', 'email', 'username'];
+  const uniques = ['id', 'gist_id', 'email', 'username'];
   return users.reduce((uniqueErr, user) => {
     let err;
     uniques.forEach((unique) => {
@@ -38,7 +38,7 @@ const createUser = async (body) => {
     const id = uuid();
     const email = body.email.toLowerCase();
     const newUser = { id, ...body, email };
-    const uniqueErr = testUniques(body, users);
+    const uniqueErr = testUniques(newUser, users);
     if (uniqueErr) return createError(400, uniqueErr);
     newUser.hashed_pwd = bcrypt.hashSync(body.password, 10);
     delete newUser.password;
