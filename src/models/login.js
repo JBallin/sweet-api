@@ -9,7 +9,7 @@ const login = async ({ email, password }) => {
     user = await knex('users').where('email', email.toLowerCase()).first();
     if (!user) return errors.invalidLogin;
   } catch (e) {
-    return errors.userDB(e);
+    return errors.fetchDB('user', e);
   }
   try {
     isPasswordValid = bcrypt.compareSync(password, user.hashed_pwd);

@@ -7,8 +7,7 @@ const createError = (status, message, err) => {
 
 module.exports = {
   // DB
-  usersDB: e => createError(500, 'Error fetching users from database', e),
-  userDB: e => createError(500, 'Error fetching user from database', e),
+  fetchDB: (data, e) => createError(500, `Error fetching ${data} from database`, e),
   addUserDB: e => createError(500, 'Error adding user to database', e),
   userUpdateDB: e => createError(500, 'Error updating user in database', e),
   deleteUserDB: e => createError(500, 'Error deleting user from database', e),

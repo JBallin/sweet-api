@@ -4,10 +4,10 @@ const knex = require('../../knex');
 const errors = require('../utils/errors');
 
 const getAllUsers = () => knex('users').select('username', 'name')
-  .catch(e => errors.usersDB(e));
+  .catch(e => errors.fetchDB('users', e));
 
 const getUser = id => knex('users').where('id', id).first()
-  .catch(e => errors.userDB(e));
+  .catch(e => errors.fetchDB('user', e));
 
 const testUniques = (body, users) => {
   const uniques = ['id', 'gist_id', 'email', 'username'];

@@ -65,7 +65,7 @@ const validateId = async (req, res, next) => {
     }
     return next();
   } catch (e) {
-    return next(errors.usersDB(e).error);
+    return next(errors.fetchDB('users', e).error);
   }
 };
 
