@@ -1,13 +1,8 @@
-const router = require('express').Router();
-const knex = require('../../knex');
+const express = require('express');
+const ctrl = require('../controllers/categories');
 
-router.get('/', (req, res) => {
-  knex('categories')
-    .then(categories => res.json(categories))
-    .catch((err) => {
-      console.error(err); // eslint-disable-line no-console
-      res.status(500).send('Error fetching categories table');
-    });
-});
+const router = express.Router();
+
+router.get('/', ctrl.getCategories);
 
 module.exports = router;
