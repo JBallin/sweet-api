@@ -1,8 +1,9 @@
 const errors = require('../utils/errors');
+const { clearTokenCookie } = require('../utils/auth');
 
-const logout = async (req, res, next) => {
+const logout = (req, res, next) => {
   try {
-    res.clearCookie('token');
+    clearTokenCookie(res);
     res.sendStatus(205);
   } catch (e) {
     next(errors.logout(e));
