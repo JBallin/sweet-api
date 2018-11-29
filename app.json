@@ -1,6 +1,7 @@
 {
   "name": "sweet-api",
   "scripts": {
+    "postdeploy": "knex migrate:rollback; knex migrate:latest; knex seed:run"
   },
   "env": {
   },
