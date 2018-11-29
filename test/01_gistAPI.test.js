@@ -14,13 +14,17 @@ describe('gist API', () => {
     });
     done();
   });
-  it('should return non-empty array with working gistID', function (done) {
+  it('should return non-empty array with working gistID', (done) => {
     if (!gistId) this.skip();
 
     fetchGistFiles(gistId).then((res) => {
-      assert.isArray(res);
-      assert.isString(res[2]);
+      if (res.error) {
+        done(Error(res.error.message));
+      } else {
+        assert.isArray(res);
+        assert.isString(res[2]);
+        done();
+      }
     });
-    done();
   });
 });
