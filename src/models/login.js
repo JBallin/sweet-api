@@ -14,7 +14,7 @@ const login = async ({ email, password }) => {
   try {
     isPasswordValid = bcrypt.compareSync(password, user.hashed_pwd);
     if (!isPasswordValid) return errors.invalidLogin;
-    return { username: user.username };
+    return { id: user.id, username: user.username };
   } catch (e) {
     return errors.bcrypt(e);
   }
