@@ -1,13 +1,8 @@
-const router = require('express').Router();
-const knex = require('../../knex');
+const express = require('express');
+const ctrl = require('../controllers/fileTypes');
 
-router.get('/', (req, res) => {
-  knex('file_types')
-    .then(types => res.json(types))
-    .catch((err) => {
-      console.error(err); // eslint-disable-line no-console
-      res.status(500).send('Error fetching file_types table');
-    });
-});
+const router = express.Router();
+
+router.get('/', ctrl.getFileTypes);
 
 module.exports = router;
