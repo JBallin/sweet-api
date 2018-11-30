@@ -2,10 +2,6 @@ const request = require('supertest');
 const app = require('../src/app');
 
 describe('/files', () => {
-  before(() => {
-    if (!process.env.GIST_ID) this.skip();
-  });
-
   describe('GET', () => {
     it('should return JSON', (done) => {
       request(app)

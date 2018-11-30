@@ -1,7 +1,8 @@
 const { assert } = require('chai');
 const { fetchGistFiles } = require('../src/utils/gistAPI');
+const { seeds } = require('../seeds/001users');
 
-const gistId = process.env.GIST_ID;
+const gistId = seeds[0].gist_id;
 
 describe('gist API', () => {
   it('should return array with null gistID', (done) => {
@@ -12,14 +13,12 @@ describe('gist API', () => {
     done();
   });
   it('should return non-empty array with working gistID', (done) => {
-    if (!gistId) this.skip();
-
     fetchGistFiles(gistId).then((res) => {
       if (res.error) {
         done(Error(res.error.message));
       } else {
         assert.isArray(res);
-        assert.isString(res[2]);
+        assert.isString(res[0]);
         done();
       }
     });
