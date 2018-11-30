@@ -21,7 +21,7 @@ const errors = {
 
 describe('/login', () => {
   describe('POST', () => {
-    it('should catch missing email/password', (done) => {
+    it('should error missing email/password', (done) => {
       request(app)
         .post('/login')
         .expect(400)
@@ -35,7 +35,7 @@ describe('/login', () => {
           return done();
         });
     });
-    it('should catch invalid credentials', (done) => {
+    it('should error invalid credentials', (done) => {
       request(app)
         .post('/login')
         .send(invalid)
