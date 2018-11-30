@@ -2,7 +2,6 @@ const jwt = require('jsonwebtoken');
 
 const { JWT_KEY, NODE_ENV } = process.env;
 
-
 const createToken = (user) => {
   const jwtPayload = { sub: user.id };
   const jwtOptions = { expiresIn: '2d' };

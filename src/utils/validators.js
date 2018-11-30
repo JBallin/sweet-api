@@ -86,6 +86,14 @@ const validateGistId = async (req, res, next) => {
   }
 };
 
+const validateJwtKey = (req, res, next) => {
+  if (!process.env.JWT_KEY) {
+    next(errors.jwtKeyMissing.error);
+  } else {
+    next();
+  }
+};
+
 module.exports = {
-  validateUser, validateId, validateUserUpdate, validateLoginBody, validateGistId,
+  validateUser, validateId, validateUserUpdate, validateLoginBody, validateGistId, validateJwtKey,
 };
