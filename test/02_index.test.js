@@ -7,7 +7,14 @@ describe('/', () => {
       request(app)
         .get('/')
         .expect('Content-Type', /html/)
-        .expect(200, done);
+        .expect(200)
+        .end((err, res) => {
+          if (err) {
+            if (res.body.error) return done(Error(res.body.error));
+            return done(err);
+          }
+          return done(err);
+        });
     });
   });
 });

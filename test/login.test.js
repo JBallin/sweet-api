@@ -27,7 +27,10 @@ describe('/login', () => {
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
-          if (err) return done(err);
+          if (err) {
+            if (res.body.error) return done(Error(res.body.error));
+            return done(err);
+          }
           assert.equal(res.body.error, errors.missingLogin);
           return done();
         });
@@ -39,7 +42,10 @@ describe('/login', () => {
         .expect(401)
         .expect('Content-Type', /json/)
         .end((err, res) => {
-          if (err) return done(err);
+          if (err) {
+            if (res.body.error) return done(Error(res.body.error));
+            return done(err);
+          }
           assert.equal(res.body.error, errors.invalidLogin);
           return done();
         });
@@ -51,7 +57,10 @@ describe('/login', () => {
         .expect(200)
         .expect('Content-Type', /json/)
         .end((err, res) => {
-          if (err) return done(err);
+          if (err) {
+            if (res.body.error) return done(Error(res.body.error));
+            return done(err);
+          }
           assert.deepEqual(res.body, { username: validUsername });
           return done();
         });

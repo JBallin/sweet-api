@@ -35,7 +35,10 @@ describe('/users', () => {
         .expect(200)
         .expect('Content-Type', /json/)
         .end((err, res) => {
-          if (err) return done(err);
+          if (err) {
+            if (res.body.error) return done(Error(res.body.error));
+            return done(err);
+          }
           const { username, name } = seeds[0];
           assert.deepEqual(res.body[0], {
             username, name,
@@ -52,7 +55,10 @@ describe('/users', () => {
         .expect(201)
         .expect('Content-Type', /json/)
         .end((err, res) => {
-          if (err) return done(err);
+          if (err) {
+            if (res.body.error) return done(Error(res.body.error));
+            return done(err);
+          }
           assert.equal(res.body.new_user, payload.username);
           return knex('users')
             .where('username', payload.username)
@@ -70,7 +76,10 @@ describe('/users', () => {
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
-          if (err) return done(err);
+          if (err) {
+            if (res.body.error) return done(Error(res.body.error));
+            return done(err);
+          }
           assert.deepEqual(res.body.error, errors.missing(['password']));
           return done();
         });
@@ -81,7 +90,10 @@ describe('/users', () => {
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
-          if (err) return done(err);
+          if (err) {
+            if (res.body.error) return done(Error(res.body.error));
+            return done(err);
+          }
           assert.deepEqual(res.body.error, errors.noBody);
           return done();
         });
@@ -93,7 +105,10 @@ describe('/users', () => {
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
-          if (err) return done(err);
+          if (err) {
+            if (res.body.error) return done(Error(res.body.error));
+            return done(err);
+          }
           assert.equal(res.body.error, errors.extra(['extra']));
           return done();
         });
@@ -105,7 +120,10 @@ describe('/users', () => {
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
-          if (err) return done(err);
+          if (err) {
+            if (res.body.error) return done(Error(res.body.error));
+            return done(err);
+          }
           assert.equal(res.body.error, errors.unique('email', seeds[0].email));
           return done();
         });
@@ -117,7 +135,10 @@ describe('/users', () => {
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
-          if (err) return done(err);
+          if (err) {
+            if (res.body.error) return done(Error(res.body.error));
+            return done(err);
+          }
           assert.equal(res.body.error, errors.unique('username', seeds[0].username));
           return done();
         });
@@ -129,7 +150,10 @@ describe('/users', () => {
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
-          if (err) return done(err);
+          if (err) {
+            if (res.body.error) return done(Error(res.body.error));
+            return done(err);
+          }
           assert.equal(res.body.error, errors.unique('gist_id', seeds[0].gist_id));
           return done();
         });
@@ -145,7 +169,10 @@ describe('/users/:id', () => {
         .expect(200)
         .expect('Content-Type', /json/)
         .end((err, res) => {
-          if (err) return done(err);
+          if (err) {
+            if (res.body.error) return done(Error(res.body.error));
+            return done(err);
+          }
           assert.equal(res.body.name, seeds[0].name);
           assert.equal(res.body.username, seeds[0].username);
           return done();
@@ -158,7 +185,10 @@ describe('/users/:id', () => {
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
-          if (err) return done(err);
+          if (err) {
+            if (res.body.error) return done(Error(res.body.error));
+            return done(err);
+          }
           assert.equal(res.body.error, errors.uuid(badId));
           return done();
         });
@@ -169,7 +199,10 @@ describe('/users/:id', () => {
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
-          if (err) return done(err);
+          if (err) {
+            if (res.body.error) return done(Error(res.body.error));
+            return done(err);
+          }
           assert.equal(res.body.error, errors.idDNE(idThatDNE));
           return done();
         });
@@ -183,8 +216,11 @@ describe('/users/:id', () => {
         .send(payload)
         .expect(200)
         .expect('Content-Type', /json/)
-        .end((err) => {
-          if (err) return done(err);
+        .end((err, res) => {
+          if (err) {
+            if (res.body.error) return done(Error(res.body.error));
+            return done(err);
+          }
           return knex('users')
             .where('id', seedId)
             .first()
@@ -203,7 +239,10 @@ describe('/users/:id', () => {
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
-          if (err) return done(err);
+          if (err) {
+            if (res.body.error) return done(Error(res.body.error));
+            return done(err);
+          }
           assert.equal(res.body.error, errors.noBody);
           return done();
         });
@@ -215,7 +254,10 @@ describe('/users/:id', () => {
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
-          if (err) return done(err);
+          if (err) {
+            if (res.body.error) return done(Error(res.body.error));
+            return done(err);
+          }
           assert.equal(res.body.error, errors.idDNE(idThatDNE));
           return done();
         });
@@ -227,7 +269,10 @@ describe('/users/:id', () => {
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
-          if (err) return done(err);
+          if (err) {
+            if (res.body.error) return done(Error(res.body.error));
+            return done(err);
+          }
           assert.equal(res.body.error, errors.invalid(['bad']));
           return done();
         });
@@ -238,8 +283,11 @@ describe('/users/:id', () => {
       request(app)
         .delete(`/users/${seedId}`)
         .expect(204)
-        .end((err) => {
-          if (err) return done(err);
+        .end((err, res) => {
+          if (err) {
+            if (res.body.error) return done(Error(res.body.error));
+            return done(err);
+          }
           return knex('users')
             .where('id', seedId)
             .then((user) => {
@@ -254,7 +302,10 @@ describe('/users/:id', () => {
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
-          if (err) return done(err);
+          if (err) {
+            if (res.body.error) return done(Error(res.body.error));
+            return done(err);
+          }
           assert.equal(res.body.error, errors.idDNE(idThatDNE));
           return done();
         });

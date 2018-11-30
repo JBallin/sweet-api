@@ -19,7 +19,10 @@ describe('/validateGist/:gistId', () => {
         .expect(200)
         .expect('Content-Type', /json/)
         .end((err, res) => {
-          if (err) return done(err);
+          if (err) {
+            if (res.body.error) return done(Error(res.body.error));
+            return done(err);
+          }
           assert.isTrue(res.body.isValid);
           return done();
         });
@@ -32,7 +35,10 @@ describe('/validateGist/:gistId', () => {
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
-          if (err) return done(err);
+          if (err) {
+            if (res.body.error) return done(Error(res.body.error));
+            return done(err);
+          }
           assert.equal(res.body.error, errors.gistDNE(testId));
           return done();
         });
@@ -44,7 +50,10 @@ describe('/validateGist/:gistId', () => {
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
-          if (err) return done(err);
+          if (err) {
+            if (res.body.error) return done(Error(res.body.error));
+            return done(err);
+          }
           assert.equal(res.body.error, errors.invalidBSGist);
           return done();
         });
@@ -55,7 +64,10 @@ describe('/validateGist/:gistId', () => {
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
-          if (err) return done(err);
+          if (err) {
+            if (res.body.error) return done(Error(res.body.error));
+            return done(err);
+          }
           assert.equal(res.body.error, errors.noGistId);
           return done();
         });
