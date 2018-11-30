@@ -11,6 +11,7 @@ module.exports = {
   addUserDB: e => createError(500, 'Error adding user to database', e),
   userUpdateDB: e => createError(500, 'Error updating user in database', e),
   deleteUserDB: e => createError(500, 'Error deleting user from database', e),
+  categorizedFilesJoinDB: e => createError(500, 'Error joining categories and file_types', e),
   // GET
   uuid: id => createError(400, `Invalid UUID '${id}'`),
   idDNE: id => createError(400, `No user with ID '${id}'`),
