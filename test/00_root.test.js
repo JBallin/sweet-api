@@ -1,4 +1,5 @@
 const knex = require('../knex');
+require('dotenv').load();
 
 beforeEach(async () => {
   await knex.migrate.rollback();
