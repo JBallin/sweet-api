@@ -1,9 +1,9 @@
 const express = require('express');
 const ctrl = require('../controllers/login');
-const { validateLoginBody } = require('../utils/validators');
+const { validateLoginBody, validateJwtKey } = require('../utils/validators');
 
 const router = express.Router();
 
-router.post('/', validateLoginBody, ctrl.login);
+router.post('/', validateLoginBody, validateJwtKey, ctrl.login);
 
 module.exports = router;
