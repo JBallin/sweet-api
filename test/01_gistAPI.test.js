@@ -1,5 +1,3 @@
-/* eslint-disable prefer-arrow-callback, func-names */
-
 const { assert } = require('chai');
 const { fetchGistFiles } = require('../src/utils/gistAPI');
 require('dotenv').load();
