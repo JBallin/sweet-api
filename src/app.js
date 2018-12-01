@@ -10,7 +10,6 @@ const usersRouter = require('./routes/users');
 const categoriesRouter = require('./routes/categories');
 const fileTypesRouter = require('./routes/fileTypes');
 const filesRouter = require('./routes/files');
-const validateGistRouter = require('./routes/validateGist');
 const loginRouter = require('./routes/login');
 const logoutRouter = require('./routes/logout');
 
@@ -32,7 +31,6 @@ app.use('/users', usersRouter);
 app.use('/categories', categoriesRouter);
 app.use('/fileTypes', fileTypesRouter);
 app.use('/files', filesRouter);
-app.use('/validateGist', validateGistRouter);
 app.use('/login', loginRouter);
 app.use('/logout', logoutRouter);
 
