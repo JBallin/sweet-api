@@ -19,6 +19,10 @@ const errors = {
   missing: fields => `Missing fields: ${fields.join(', ').trim(',')}`,
   unique: (field, key) => `User with ${field} '${key}' already exists`,
   extra: fields => `Extra fields: ${fields.join(', ').trim(',')}`,
+  // GIST_ID
+  gistDNE: id => `No gist with ID '${id}'`,
+  noGistId: 'No gist ID provided',
+  invalidBSGist: 'Invalid ballin-scripts gist',
   // PUT
   invalid: fields => `Invalid fields: ${fields.join(', ').trim(',')}`,
 };
@@ -155,6 +159,38 @@ describe('/users', () => {
             return done(err);
           }
           assert.equal(res.body.error, errors.unique('gist_id', seeds[0].gist_id));
+          return done();
+        });
+    });
+    it('should error with invalid gist_id', (done) => {
+      const testId = '2';
+      request(app)
+        .post('/users')
+        .send({ ...payloadWithPassword, gist_id: testId })
+        .expect(400)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) {
+            if (res.body.error) return done(Error(res.body.error));
+            return done(err);
+          }
+          assert.equal(res.body.error, errors.gistDNE(testId));
+          return done();
+        });
+    });
+    it('should error with invalid ballin-scripts gist_id', (done) => {
+      const testId = 1;
+      request(app)
+        .post('/users')
+        .send({ ...payloadWithPassword, gist_id: testId })
+        .expect(400)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) {
+            if (res.body.error) return done(Error(res.body.error));
+            return done(err);
+          }
+          assert.equal(res.body.error, errors.invalidBSGist);
           return done();
         });
     });
