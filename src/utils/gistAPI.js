@@ -19,7 +19,7 @@ async function fetchGist(gistId) {
       if (message === 'Not Found') {
         return errors.gistDNE(gistId);
       }
-      return errors.gistErr(message);
+      return errors.gistErr({ message });
     }
 
     return gist;
