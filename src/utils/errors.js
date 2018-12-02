@@ -36,4 +36,5 @@ module.exports = {
   gistErr: e => createError(500, 'Error fetching gist', e),
   noGistId: createError(400, 'No gist ID provided'),
   invalidBSGist: createError(400, 'Invalid ballin-scripts gist'),
+  githubAPIError: e => createError(500, 'Error fetching GitHub API', e),
 };

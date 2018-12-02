@@ -7,21 +7,25 @@ const token = GITHUB_TOKEN ? `access_token=${GITHUB_TOKEN}` : '';
 
 async function fetchGist(gistId) {
   const gistAPIwithIdAndToken = `${gistAPI}/${gistId}?${token}`;
-  const gistJSON = await fetch(gistAPIwithIdAndToken);
-  const gist = await gistJSON.json();
-  const { message } = gist;
+  try {
+    const gistJSON = await fetch(gistAPIwithIdAndToken);
+    const gist = await gistJSON.json();
+    const { message } = gist;
 
-  if (message) {
-    if (message.includes('rate limit')) {
-      return errors.githubAPILimit;
+    if (message) {
+      if (message.includes('rate limit')) {
+        return errors.githubAPILimit;
+      }
+      if (message === 'Not Found') {
+        return errors.gistDNE(gistId);
+      }
+      return errors.gistErr(message);
     }
-    if (message === 'Not Found') {
-      return errors.gistDNE(gistId);
-    }
-    return errors.gistErr(message);
+
+    return gist;
+  } catch (e) {
+    return errors.githubApiError(e);
   }
-
-  return gist;
 }
 
 async function fetchGistFiles(gistId) {
