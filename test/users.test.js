@@ -8,7 +8,6 @@ const payload = {
   gist_id: 'f7217444324b91f926d01e1c02ce2755',
   username: 'super_coder',
   email: 'git_creator@gmail.com',
-  name: 'Linus Torvalds',
 };
 
 const errors = {
