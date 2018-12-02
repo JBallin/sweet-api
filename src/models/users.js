@@ -9,27 +9,11 @@ const getAllUsers = () => knex('users').select('username', 'name')
 const getUser = id => knex('users').where('id', id).first()
   .catch(e => errors.fetchDB('user', e));
 
-const testUniques = (body, users) => {
-  const uniques = ['id', 'gist_id', 'email', 'username'];
-  return users.reduce((uniqueErr, user) => {
-    let err;
-    uniques.forEach((unique) => {
-      if (!err && (body[unique] === user[unique])) {
-        err = errors.unique(unique, body[unique]);
-      }
-    });
-    return err || uniqueErr;
-  }, '');
-};
-
 const createUser = async (body) => {
   try {
-    const users = await knex('users');
     const id = uuid();
     const email = body.email.toLowerCase();
     const newUser = { id, ...body, email };
-    const uniqueErr = testUniques(newUser, users);
-    if (uniqueErr) return uniqueErr;
     newUser.hashed_pwd = bcrypt.hashSync(body.password, 10);
     delete newUser.password;
     const [user] = await knex('users').insert(newUser, '*');

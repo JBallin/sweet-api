@@ -4,7 +4,21 @@ const errors = require('./errors');
 
 const expectedFields = ['gist_id', 'email', 'username', 'password'];
 
-const validateUser = (req, res, next) => {
+const testUniques = async (body) => {
+  const uniques = ['id', 'gist_id', 'username', 'email'];
+  const users = await knex('users');
+  return users.reduce((uniqueErr, user) => {
+    let err;
+    uniques.forEach((unique) => {
+      if (!err && (body[unique] === user[unique])) {
+        err = errors.unique(unique, body[unique]);
+      }
+    });
+    return err || uniqueErr;
+  }, '');
+};
+
+const validateUser = async (req, res, next) => {
   const { body } = req;
   const bodyKeys = Object.keys(body);
   if (!bodyKeys.length) {
@@ -25,6 +39,9 @@ const validateUser = (req, res, next) => {
   if (remainingBodyKeys.length) {
     return next(errors.extra(remainingBodyKeys).error);
   }
+
+  const uniqueErr = await testUniques(body);
+  if (uniqueErr) return next(uniqueErr.error);
 
   return next();
 };
