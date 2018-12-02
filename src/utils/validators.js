@@ -2,7 +2,7 @@ const knex = require('../../knex');
 const { validateGist } = require('./gistAPI');
 const errors = require('./errors');
 
-const expectedFields = ['gist_id', 'name', 'email', 'username', 'password'];
+const expectedFields = ['gist_id', 'email', 'username', 'password'];
 
 const validateUser = (req, res, next) => {
   const { body } = req;
