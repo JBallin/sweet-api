@@ -9,11 +9,14 @@ const getAllUsers = () => knex('users').select('username', 'name')
 const getUser = id => knex('users').where('id', id).first()
   .catch(e => errors.fetchDB('user', e));
 
+const toLowerCase = obj => Object.keys(obj).reduce((res, key) => ({
+  ...res, [key]: obj[key].toLowerCase(),
+}), {});
+
 const createUser = async (body) => {
   try {
     const id = uuid();
-    const email = body.email.toLowerCase();
-    const newUser = { id, ...body, email };
+    const newUser = { id, ...toLowerCase(body) };
     newUser.hashed_pwd = bcrypt.hashSync(body.password, 10);
     delete newUser.password;
     const [user] = await knex('users').insert(newUser, '*');
