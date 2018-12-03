@@ -6,6 +6,8 @@ const logger = require('morgan');
 const cors = require('cors');
 require('dotenv').config();
 
+const errors = require('./utils/errors');
+
 const usersRouter = require('./routes/users');
 const categoriesRouter = require('./routes/categories');
 const fileTypesRouter = require('./routes/fileTypes');
@@ -15,6 +17,14 @@ const logoutRouter = require('./routes/logout');
 
 const app = express();
 app.disable('x-powered-by');
+
+app.use((req, res, next) => {
+  if (!process.env.JWT_KEY) {
+    next(errors.jwtKeyMissing.error);
+  } else {
+    next();
+  }
+});
 
 if (!process.env.NODE_ENV) app.use(logger('dev'));
 app.use(express.json());
