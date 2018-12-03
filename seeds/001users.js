@@ -5,7 +5,7 @@ const seeds = [{
   gist_id: process.env.GIST_ID || '5fb484f659ccc54a493d4295d6346a39',
   name: null,
   email: 'jballin@fake.com',
-  username: 'JBallin',
+  username: 'jballin',
   hashed_pwd: '$2b$10$fn09RI9qU6OHe6/89oNMn.q/VshQc8V3kzg6x81XvtNJYLUnSd79W',
 }];
 
