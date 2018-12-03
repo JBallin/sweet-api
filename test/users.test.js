@@ -5,12 +5,6 @@ const { seeds } = require('../seeds/001users');
 const knex = require('../knex');
 const { createToken } = require('../src/utils/auth');
 
-const payload = {
-  gist_id: 'f7217444324b91f926d01e1c02ce2755',
-  username: 'super_coder',
-  email: 'git_creator@gmail.com',
-};
-
 const errors = {
   uuid: id => `Invalid UUID '${id}'`,
   idDNE: id => `No user with ID '${id}'`,
@@ -27,9 +21,14 @@ const errors = {
   invalid: fields => `Invalid fields: ${fields.join(', ').trim(',')}`,
 };
 
+const payload = {
+  gist_id: 'f7217444324b91f926d01e1c02ce2755',
+  username: 'super_coder',
+  email: 'git_creator@gmail.com',
+};
+const payloadWithPassword = { ...payload, password: 'hello' };
 const uuidThatDNE = 'de455777-255e-4e61-b53c-6dd942f1ad7c';
 const seedId = seeds[0].id;
-const payloadWithPassword = { ...payload, password: 'hello' };
 const seedToken = createToken({ id: seedId });
 
 describe('/users', () => {
