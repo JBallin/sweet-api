@@ -20,6 +20,8 @@ const errors = {
   invalidBSGist: 'Invalid ballin-scripts gist',
   // PUT
   invalid: fields => `Invalid fields: ${fields.join(', ').trim(',')}`,
+  // TOKEN
+  noToken: 'Missing token',
 };
 
 const payload = {
@@ -183,6 +185,17 @@ describe('/users/:id', () => {
           return done();
         });
     });
+    it('should error with no token', (done) => {
+      request(app)
+        .get(`/users/${seedId}`)
+        .expect(403)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) return done(formatErr(err, res));
+          assert.equal(res.body.error, errors.noToken);
+          return done();
+        });
+    });
     it('should error with invalid ID', (done) => {
       const badId = '1';
       request(app)
@@ -228,6 +241,18 @@ describe('/users/:id', () => {
               assert.notDeepEqual(user.created_at, user.updated_at);
               return done();
             });
+        });
+    });
+    it('should error with no token', (done) => {
+      request(app)
+        .put(`/users/${seedId}`)
+        .send(payload)
+        .expect(403)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) return done(formatErr(err, res));
+          assert.equal(res.body.error, errors.noToken);
+          return done();
         });
     });
     it('should error with empty body', (done) => {
@@ -280,6 +305,16 @@ describe('/users/:id', () => {
               assert.lengthOf(user, 0);
             })
             .then(done);
+        });
+    });
+    it('should error with no token', (done) => {
+      request(app)
+        .delete(`/users/${seedId}`)
+        .expect(403)
+        .end((err, res) => {
+          if (err) return done(formatErr(err, res));
+          assert.equal(res.body.error, errors.noToken);
+          return done();
         });
     });
     it('should error with non-existent ID', (done) => {
