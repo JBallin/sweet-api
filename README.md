@@ -4,6 +4,7 @@ API for [My Sweet Config](https://github.com/JBallin/sweet-config).
 
 ```shell
 $ npm install
+$ echo 'JWT_KEY=$YOUR_JWT_KEY' > .env
 $ createdb sweet_dev
 $ npm run seed-dev
 $ npm run dev
