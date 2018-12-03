@@ -21,6 +21,7 @@ const errors = {
   // PUT
   invalid: fields => `Invalid fields: ${fields.join(', ').trim(',')}`,
   // TOKEN
+  invalidJWT: 'Invalid token',
   noToken: 'Missing token',
 };
 
@@ -33,6 +34,7 @@ const payloadWithPassword = { ...payload, password: 'hello' };
 const uuidThatDNE = 'de455777-255e-4e61-b53c-6dd942f1ad7c';
 const seedId = seeds[0].id;
 const seedToken = createToken({ id: seedId });
+const invalidToken = createToken({ id: seedId }, 0);
 
 describe('/users', () => {
   describe('GET', () => {
@@ -196,6 +198,18 @@ describe('/users/:id', () => {
           return done();
         });
     });
+    it('should error with invalid token', (done) => {
+      request(app)
+        .get(`/users/${seedId}`)
+        .set('Cookie', [`token=${invalidToken}`])
+        .expect(403)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) return done(formatErr(err, res));
+          assert.equal(res.body.error, errors.invalidJWT);
+          return done();
+        });
+    });
     it('should error with invalid ID', (done) => {
       const badId = '1';
       request(app)
@@ -252,6 +266,19 @@ describe('/users/:id', () => {
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.noToken);
+          return done();
+        });
+    });
+    it('should error with invalid token', (done) => {
+      request(app)
+        .put(`/users/${seedId}`)
+        .set('Cookie', `token=${invalidToken}`)
+        .send(payload)
+        .expect(403)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) return done(formatErr(err, res));
+          assert.equal(res.body.error, errors.invalidJWT);
           return done();
         });
     });
@@ -314,6 +341,17 @@ describe('/users/:id', () => {
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.noToken);
+          return done();
+        });
+    });
+    it('should error with invalid token', (done) => {
+      request(app)
+        .delete(`/users/${seedId}`)
+        .set('Cookie', `token=${invalidToken}`)
+        .expect(403)
+        .end((err, res) => {
+          if (err) return done(formatErr(err, res));
+          assert.equal(res.body.error, errors.invalidJWT);
           return done();
         });
     });
