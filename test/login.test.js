@@ -1,18 +1,17 @@
 const request = require('supertest');
 const { assert } = require('chai');
 const app = require('../src/app');
+const { seeds } = require('../seeds/001users');
 
 const invalid = {
-  email: 'jballin@fake.com',
+  email: seeds[0].email,
   password: 'HELLO',
 };
 
 const valid = {
-  email: 'JBALLIN@fake.com',
+  email: seeds[0].email,
   password: 'hello',
 };
-
-const validUsername = 'jballin';
 
 const errors = {
   missingLogin: 'Missing email or password',
@@ -61,7 +60,7 @@ describe('/login', () => {
             if (res.body.error) return done(Error(res.body.error));
             return done(err);
           }
-          assert.deepEqual(res.body, { username: validUsername });
+          assert.deepEqual(res.body, { username: seeds[0].username });
           return done();
         });
     });
