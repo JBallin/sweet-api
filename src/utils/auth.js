@@ -24,6 +24,15 @@ const clearTokenCookie = (res) => {
   res.clearCookie('token', configCookie(0));
 };
 
+const validateJWT = (token, id) => {
+  try {
+    const { sub } = jwt.verify(token, JWT_KEY);
+    return sub === id;
+  } catch (e) {
+    return { error: e };
+  }
+};
+
 module.exports = {
   createToken, sendTokenCookie, clearTokenCookie, validateJWT,
 };
