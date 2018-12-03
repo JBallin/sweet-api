@@ -4,18 +4,16 @@ const errors = require('./errors');
 
 const expectedFields = ['gist_id', 'email', 'username', 'password'];
 
-const testUniques = async (body) => {
-  const uniques = ['id', 'gist_id', 'username', 'email'];
-  const users = await knex('users');
-  return users.reduce((uniqueErr, user) => {
-    let err;
-    uniques.forEach((unique) => {
-      if (!err && (body[unique] === user[unique])) {
-        err = errors.unique(unique, body[unique]);
-      }
-    });
-    return err || uniqueErr;
-  }, '');
+const isUserUnique = async (body) => {
+  const uniques = ['gist_id', 'username', 'email'];
+  const uniqueTests = uniques.map(async (unique) => {
+    const target = body[unique].toLowerCase();
+    const user = await knex('users').where(unique, target).first();
+    return user ? errors.unique(unique, target) : true;
+  });
+  const uniqueResults = await Promise.all(uniqueTests);
+  const errs = uniqueResults.filter(res => res !== true);
+  return errs[0] || true;
 };
 
 const validateUser = async (req, res, next) => {
@@ -40,8 +38,8 @@ const validateUser = async (req, res, next) => {
     return next(errors.extra(remainingBodyKeys).error);
   }
 
-  const uniqueErr = await testUniques(body);
-  if (uniqueErr) return next(uniqueErr.error);
+  const isUnique = await isUserUnique(body);
+  if (isUnique !== true) return next(isUnique.error);
 
   return next();
 };
