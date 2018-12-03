@@ -1,4 +1,8 @@
-API for [My Sweet Config](https://github.com/JBallin/sweet-config).
+# Sweet API
+
+Frontend: [My Sweet Config](https://github.com/JBallin/sweet-config)
+<br>
+Deployed API: [sweet-api.herokuapp.com][1]
 
 ### Usage
 
@@ -16,3 +20,5 @@ $ npm run dev
 $ createdb sweet_test
 $ npm test
 ```
+
+[1]: https://sweet-api.herokuapp.com
