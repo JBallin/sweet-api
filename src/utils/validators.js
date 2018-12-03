@@ -1,5 +1,6 @@
 const knex = require('../../knex');
 const { validateGist } = require('./gistAPI');
+const auth = require('./auth');
 const errors = require('./errors');
 
 const expectedFields = ['gist_id', 'email', 'username', 'password'];
@@ -101,6 +102,16 @@ const validateGistId = async (req, res, next) => {
   }
 };
 
+const validateJWT = (req, res, next) => {
+  const { token } = req.cookies;
+  const { id } = req.params;
+  if (!token) return next(errors.noToken.error);
+  const isValid = auth.validateJWT(token, id);
+  if (isValid.error) return next(errors.invalidJWT(isValid.error).error);
+  if (!isValid) return next(errors.unauthorized.error);
+  return next();
+};
+
 module.exports = {
-  validateUser, validateId, validateUserUpdate, validateLoginBody, validateGistId,
+  validateUser, validateId, validateUserUpdate, validateLoginBody, validateGistId, validateJWT,
 };
