@@ -3,6 +3,7 @@ const { assert } = require('chai');
 const app = require('../src/app');
 const { seeds } = require('../seeds/001users');
 const knex = require('../knex');
+const { createToken } = require('../src/utils/auth');
 
 const payload = {
   gist_id: 'f7217444324b91f926d01e1c02ce2755',
@@ -29,6 +30,7 @@ const errors = {
 const uuidThatDNE = 'de455777-255e-4e61-b53c-6dd942f1ad7c';
 const seedId = seeds[0].id;
 const payloadWithPassword = { ...payload, password: 'hello' };
+const seedToken = createToken({ id: seedId });
 
 describe('/users', () => {
   describe('GET', () => {
@@ -201,6 +203,7 @@ describe('/users/:id', () => {
     it('should return user', (done) => {
       request(app)
         .get(`/users/${seedId}`)
+        .set('Cookie', [`token=${seedToken}`])
         .expect(200)
         .expect('Content-Type', /json/)
         .end((err, res) => {
@@ -248,6 +251,7 @@ describe('/users/:id', () => {
     it('should update user', (done) => {
       request(app)
         .put(`/users/${seedId}`)
+        .set('Cookie', `token=${seedToken}`)
         .send(payload)
         .expect(200)
         .expect('Content-Type', /json/)
@@ -317,6 +321,7 @@ describe('/users/:id', () => {
     it('should delete user', (done) => {
       request(app)
         .delete(`/users/${seedId}`)
+        .set('Cookie', `token=${seedToken}`)
         .expect(204)
         .end((err, res) => {
           if (err) {
