@@ -2,9 +2,9 @@ const jwt = require('jsonwebtoken');
 
 const { JWT_KEY, NODE_ENV } = process.env;
 
-const createToken = (user) => {
+const createToken = (user, expiresIn = '2d') => {
   const jwtPayload = { sub: user.id };
-  const jwtOptions = { expiresIn: '2d' };
+  const jwtOptions = { expiresIn };
   return jwt.sign(jwtPayload, JWT_KEY, jwtOptions);
 };
 
@@ -24,4 +24,6 @@ const clearTokenCookie = (res) => {
   res.clearCookie('token', configCookie(0));
 };
 
-module.exports = { sendTokenCookie, clearTokenCookie };
+module.exports = {
+  createToken, sendTokenCookie, clearTokenCookie, validateJWT,
+};
