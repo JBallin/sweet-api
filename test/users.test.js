@@ -178,7 +178,7 @@ describe('/users', () => {
         });
     });
     it('should error with invalid ballin-scripts gist_id', (done) => {
-      const testId = 1;
+      const testId = '1';
       request(app)
         .post('/users')
         .send({ ...payloadWithPassword, gist_id: testId })
