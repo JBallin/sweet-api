@@ -20,6 +20,8 @@ const sendTokenCookie = (user, res) => {
   res.cookie('token', token, configCookie(twoDaysMs));
 };
 
-const clearTokenCookie = res => res.clearCookie('token', configCookie(0));
+const clearTokenCookie = (res) => {
+  res.clearCookie('token', configCookie(0));
+};
 
 module.exports = { sendTokenCookie, clearTokenCookie };
