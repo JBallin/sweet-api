@@ -26,7 +26,7 @@ const errors = {
   invalid: fields => `Invalid fields: ${fields.join(', ').trim(',')}`,
 };
 
-const idThatDNE = 'de455777-255e-4e61-b53c-6dd942f1ad7c';
+const uuidThatDNE = 'de455777-255e-4e61-b53c-6dd942f1ad7c';
 const seedId = seeds[0].id;
 const payloadWithPassword = { ...payload, password: 'hello' };
 
@@ -230,7 +230,7 @@ describe('/users/:id', () => {
     });
     it('should error with non-existent ID', (done) => {
       request(app)
-        .get(`/users/${idThatDNE}`)
+        .get(`/users/${uuidThatDNE}`)
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
@@ -238,7 +238,7 @@ describe('/users/:id', () => {
             if (res.body.error) return done(Error(res.body.error));
             return done(err);
           }
-          assert.equal(res.body.error, errors.idDNE(idThatDNE));
+          assert.equal(res.body.error, errors.idDNE(uuidThatDNE));
           return done();
         });
     });
@@ -284,7 +284,7 @@ describe('/users/:id', () => {
     });
     it('should error with non-existent ID', (done) => {
       request(app)
-        .put(`/users/${idThatDNE}`)
+        .put(`/users/${uuidThatDNE}`)
         .send(payload)
         .expect(400)
         .expect('Content-Type', /json/)
@@ -293,7 +293,7 @@ describe('/users/:id', () => {
             if (res.body.error) return done(Error(res.body.error));
             return done(err);
           }
-          assert.equal(res.body.error, errors.idDNE(idThatDNE));
+          assert.equal(res.body.error, errors.idDNE(uuidThatDNE));
           return done();
         });
     });
@@ -333,7 +333,7 @@ describe('/users/:id', () => {
     });
     it('should error with non-existent ID', (done) => {
       request(app)
-        .delete(`/users/${idThatDNE}`)
+        .delete(`/users/${uuidThatDNE}`)
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
@@ -341,7 +341,7 @@ describe('/users/:id', () => {
             if (res.body.error) return done(Error(res.body.error));
             return done(err);
           }
-          assert.equal(res.body.error, errors.idDNE(idThatDNE));
+          assert.equal(res.body.error, errors.idDNE(uuidThatDNE));
           return done();
         });
     });
