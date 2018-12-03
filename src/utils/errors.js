@@ -37,4 +37,8 @@ module.exports = {
   noGistId: createError(400, 'No gist ID provided'),
   invalidBSGist: createError(400, 'Invalid ballin-scripts gist'),
   githubAPIError: e => createError(500, 'Error fetching GitHub API', e),
+  // JWT
+  invalidJWT: e => createError(403, 'Invalid token', e),
+  unauthorized: createError(403, 'Unauthorized'),
+  noToken: createError(403, 'Missing token'),
 };
