@@ -12,7 +12,7 @@ const valid = {
   password: 'hello',
 };
 
-const validUsername = 'JBallin';
+const validUsername = 'jballin';
 
 const errors = {
   missingLogin: 'Missing email or password',
