@@ -22,6 +22,7 @@ const errors = {
   invalid: fields => `Invalid fields: ${fields.join(', ').trim(',')}`,
   // TOKEN
   invalidJWT: 'Invalid token',
+  unauthorized: 'Unauthorized',
   noToken: 'Missing token',
 };
 
@@ -36,6 +37,7 @@ const seedId = seeds[0].id;
 const badId = '1';
 const seedToken = createToken({ id: seedId });
 const invalidToken = createToken({ id: seedId }, 0);
+const wrongUserToken = createToken({ id: badId });
 
 describe('/users', () => {
   describe('GET', () => {
@@ -211,6 +213,18 @@ describe('/users/:id', () => {
           return done();
         });
     });
+    it('should error with unauthorized token', (done) => {
+      request(app)
+        .get(`/users/${seedId}`)
+        .set('Cookie', [`token=${wrongUserToken}`])
+        .expect(403)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) return done(formatErr(err, res));
+          assert.equal(res.body.error, errors.unauthorized);
+          return done();
+        });
+    });
     it('should error with invalid ID', (done) => {
       request(app)
         .get(`/users/${badId}`)
@@ -279,6 +293,19 @@ describe('/users/:id', () => {
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.invalidJWT);
+          return done();
+        });
+    });
+    it('should error with unauthorized token', (done) => {
+      request(app)
+        .put(`/users/${seedId}`)
+        .set('Cookie', `token=${wrongUserToken}`)
+        .send(payload)
+        .expect(403)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) return done(formatErr(err, res));
+          assert.equal(res.body.error, errors.unauthorized);
           return done();
         });
     });
@@ -352,6 +379,17 @@ describe('/users/:id', () => {
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.invalidJWT);
+          return done();
+        });
+    });
+    it('should error with unauthorized token', (done) => {
+      request(app)
+        .delete(`/users/${seedId}`)
+        .set('Cookie', `token=${wrongUserToken}`)
+        .expect(403)
+        .end((err, res) => {
+          if (err) return done(formatErr(err, res));
+          assert.equal(res.body.error, errors.unauthorized);
           return done();
         });
     });
