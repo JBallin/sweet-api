@@ -3,8 +3,8 @@ const { assert } = require('chai');
 const app = require('../src/app');
 
 const invalid = {
-  email: 'joe@invalid.com',
-  password: 'invalid password',
+  email: 'jballin@fake.com',
+  password: 'HELLO',
 };
 
 const valid = {
