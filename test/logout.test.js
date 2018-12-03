@@ -1,5 +1,6 @@
 const request = require('supertest');
 const app = require('../src/app');
+const { formatErr } = require('./utils/errors');
 
 describe('/logout', () => {
   describe('POST', () => {
@@ -8,11 +9,8 @@ describe('/logout', () => {
         .post('/logout')
         .expect(205)
         .end((err, res) => {
-          if (err) {
-            if (res.body.error) return done(Error(res.body.error));
-            return done(err);
-          }
-          return done(err);
+          if (err) return done(formatErr(err, res));
+          return done();
         });
     });
   });

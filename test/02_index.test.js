@@ -1,5 +1,6 @@
 const request = require('supertest');
 const app = require('../src/app');
+const { formatErr } = require('./utils/errors');
 
 describe('/', () => {
   describe('GET', () => {
@@ -9,11 +10,8 @@ describe('/', () => {
         .expect('Content-Type', /html/)
         .expect(200)
         .end((err, res) => {
-          if (err) {
-            if (res.body.error) return done(Error(res.body.error));
-            return done(err);
-          }
-          return done(err);
+          if (err) return done(formatErr(err, res));
+          return done();
         });
     });
   });

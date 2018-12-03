@@ -2,6 +2,7 @@ const request = require('supertest');
 const { assert } = require('chai');
 const app = require('../src/app');
 const { seeds } = require('../seeds/001users');
+const { formatErr } = require('./utils/errors');
 
 const invalid = {
   email: seeds[0].email,
@@ -26,10 +27,7 @@ describe('/login', () => {
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
-          if (err) {
-            if (res.body.error) return done(Error(res.body.error));
-            return done(err);
-          }
+          if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.missingLogin);
           return done();
         });
@@ -41,10 +39,7 @@ describe('/login', () => {
         .expect(401)
         .expect('Content-Type', /json/)
         .end((err, res) => {
-          if (err) {
-            if (res.body.error) return done(Error(res.body.error));
-            return done(err);
-          }
+          if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.invalidLogin);
           return done();
         });
@@ -56,10 +51,7 @@ describe('/login', () => {
         .expect(200)
         .expect('Content-Type', /json/)
         .end((err, res) => {
-          if (err) {
-            if (res.body.error) return done(Error(res.body.error));
-            return done(err);
-          }
+          if (err) return done(formatErr(err, res));
           assert.deepEqual(res.body, { username: seeds[0].username });
           return done();
         });
