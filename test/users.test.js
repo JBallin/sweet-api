@@ -33,6 +33,7 @@ const payload = {
 const payloadWithPassword = { ...payload, password: 'hello' };
 const uuidThatDNE = 'de455777-255e-4e61-b53c-6dd942f1ad7c';
 const seedId = seeds[0].id;
+const badId = '1';
 const seedToken = createToken({ id: seedId });
 const invalidToken = createToken({ id: seedId }, 0);
 
@@ -211,7 +212,6 @@ describe('/users/:id', () => {
         });
     });
     it('should error with invalid ID', (done) => {
-      const badId = '1';
       request(app)
         .get(`/users/${badId}`)
         .expect(400)
