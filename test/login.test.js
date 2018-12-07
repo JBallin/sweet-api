@@ -52,7 +52,12 @@ describe('/login', () => {
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
-          assert.deepEqual(res.body, { username: seeds[0].username });
+          const strippedBody = { ...res.body };
+          delete strippedBody.created_at;
+          delete strippedBody.updated_at;
+          const seedWithoutHashedPwd = { ...seeds[0] };
+          delete seedWithoutHashedPwd.hashed_pwd;
+          assert.deepEqual(strippedBody, seedWithoutHashedPwd);
           return done();
         });
     });
