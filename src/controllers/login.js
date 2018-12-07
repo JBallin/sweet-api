@@ -6,7 +6,7 @@ const login = async (req, res, next) => {
   if (user.error) next(user.error);
   else {
     sendTokenCookie(user, res);
-    res.json({ username: user.username });
+    res.json(user);
   }
 };
 
