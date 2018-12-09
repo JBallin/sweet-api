@@ -4,7 +4,7 @@ const errors = require('../utils/errors');
 
 const loginWithTokenId = async (id) => {
   const user = await knex('users').where('id', id).first();
-  if (!user) return errors.invalidToken(`No user with id '${id}'`);
+  if (!user) return errors.invalidJWT({ message: `No user with id '${id}'` });
   return user;
 };
 
