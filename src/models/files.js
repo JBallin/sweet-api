@@ -46,7 +46,7 @@ const getFiles = async () => {
   }
 
   const files = categorizedFiles.reduce((result, {
-    category, title, extension, id,
+    category, title, extension, id: categoryId,
   }) => {
     const rez = result;
     const newFile = { title, extension };
@@ -56,7 +56,7 @@ const getFiles = async () => {
       const i = rez.findIndex(cat => cat.category === category);
       if (i === -1) {
         const newCategory = {
-          id,
+          id: categoryId,
           category,
           files: [],
         };
@@ -80,9 +80,9 @@ const getFiles = async () => {
   });
   const OTHER = 'Other';
   if (otherFiles.length) {
-    const { id } = categories.find(c => c.title === OTHER);
+    const { id: categoryId } = categories.find(c => c.title === OTHER);
     const otherCategory = {
-      id,
+      id: categoryId,
       category: OTHER,
       files: otherFilesParsed,
     };
