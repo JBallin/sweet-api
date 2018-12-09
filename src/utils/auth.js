@@ -24,15 +24,21 @@ const clearTokenCookie = (res) => {
   res.clearCookie('token', configCookie(0));
 };
 
-const validateJWT = (token, id) => {
+const getTokenId = (token) => {
   try {
     const { sub } = jwt.verify(token, JWT_KEY);
-    return sub === id;
+    return sub;
   } catch (e) {
     return { error: e };
   }
 };
 
+const validateJWT = (token, id) => {
+  const tokenId = getTokenId(token);
+  if (tokenId.error) return tokenId;
+  return tokenId === id;
+};
+
 module.exports = {
-  createToken, sendTokenCookie, clearTokenCookie, validateJWT,
+  createToken, sendTokenCookie, clearTokenCookie, validateJWT, getTokenId,
 };
