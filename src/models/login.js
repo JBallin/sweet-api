@@ -2,8 +2,6 @@ const bcrypt = require('bcrypt');
 const knex = require('../../knex');
 const errors = require('../utils/errors');
 
-const login = async ({ email, password }) => {
-  let user;
 const loginWithTokenId = async (id) => {
   const user = await knex('users').where('id', id).first();
   if (!user) return errors.invalidToken(`No user with id '${id}'`);
@@ -34,6 +32,12 @@ const stripHashedPwd = (user) => {
   return userWithoutHashedPwd;
 };
 
+const login = async (req) => {
+  let user;
+  if (req.tokenId) user = await loginWithTokenId(req.tokenId);
+  else user = await loginWithCredentials(req.body);
+  if (!user.error) user = stripHashedPwd(user);
+  return user;
 };
 
 module.exports = { login };
