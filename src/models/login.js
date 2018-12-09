@@ -4,6 +4,12 @@ const errors = require('../utils/errors');
 
 const login = async ({ email, password }) => {
   let user;
+const loginWithTokenId = async (id) => {
+  const user = await knex('users').where('id', id).first();
+  if (!user) return errors.invalidToken(`No user with id '${id}'`);
+  return user;
+};
+
   let isPasswordValid;
   try {
     user = await knex('users').where('email', email.toLowerCase()).first();
