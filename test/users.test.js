@@ -38,7 +38,7 @@ const seedId = seeds[0].id;
 const badId = '1';
 const seedToken = createToken({ id: seedId });
 const invalidToken = createToken({ id: seedId }, 0);
-const wrongUserToken = createToken({ id: badId });
+const wrongUserToken = createToken({ id: uuidThatDNE });
 
 describe('/users', () => {
   describe('GET', () => {

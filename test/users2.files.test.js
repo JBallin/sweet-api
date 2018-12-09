@@ -20,7 +20,7 @@ const badId = '1';
 const uuidThatDNE = 'de455777-255e-4e61-b53c-6dd942f1ad7c';
 const seedToken = createToken({ id: seedId });
 const invalidToken = createToken({ id: seedId }, 0);
-const wrongUserToken = createToken({ id: badId });
+const wrongUserToken = createToken({ id: uuidThatDNE });
 
 const expectedSeedRes = [{
   id: 8,
