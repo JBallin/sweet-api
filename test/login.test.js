@@ -14,8 +14,10 @@ const errors = {
 const invalid = { email: seeds[0].email, password: 'HELLO' };
 const valid = { email: seeds[0].email, password: 'hello' };
 const seedId = seeds[0].id;
+const uuidThatDNE = 'de455777-255e-4e61-b53c-6dd942f1ad7c';
 const seedToken = createToken({ id: seedId });
 const invalidToken = createToken({ id: seedId }, 0);
+const wrongUserToken = createToken({ id: uuidThatDNE });
 
 describe('/login', () => {
   describe('POST', () => {
@@ -101,6 +103,19 @@ describe('/login', () => {
       request(app)
         .post('/login')
         .set('Cookie', [`token=${invalidToken}`])
+        .send(valid)
+        .expect(403)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) return done(formatErr(err, res));
+          assert.equal(res.body.error, errors.invalidJWT);
+          return done();
+        });
+    });
+    it('should error with unauthorized token', (done) => {
+      request(app)
+        .post('/login')
+        .set('Cookie', [`token=${wrongUserToken}`])
         .send(valid)
         .expect(403)
         .expect('Content-Type', /json/)
