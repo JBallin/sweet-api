@@ -48,9 +48,9 @@ describe('/users', () => {
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
-          const { username, name } = seeds[0];
+          const { id, username } = seeds[0];
           assert.deepEqual(res.body[0], {
-            username, name,
+            id, username,
           });
           return done();
         });

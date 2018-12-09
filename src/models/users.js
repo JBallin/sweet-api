@@ -3,7 +3,7 @@ const uuid = require('uuid/v4');
 const knex = require('../../knex');
 const errors = require('../utils/errors');
 
-const getAllUsers = () => knex('users').select('username', 'name')
+const getAllUsers = () => knex('users').select('id', 'username')
   .catch(e => errors.fetchDB('users', e));
 
 const getUser = id => knex('users').where('id', id).first()
