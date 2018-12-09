@@ -3,7 +3,6 @@ const { fetchGistFiles } = require('../utils/gistAPI');
 const errors = require('../utils/errors');
 const { getUser } = require('./users');
 const { getCategories } = require('./categories');
-const { seeds } = require('../../seeds/001users');
 
 const getCategorizedFiles = () => knex('file_types')
   .join('categories', 'file_types.category_id', 'categories.id')
@@ -25,20 +24,20 @@ const getCategoriesTable = async () => {
   return categories;
 };
 
-const getSeedUserGistId = async () => {
-  const user = await getUser(seeds[0].id);
+const getGistId = async (userId) => {
+  const user = await getUser(userId);
   if (user.error) throw user;
   return user.gist_id;
 };
 
-const getFiles = async () => {
+const getFiles = async (userId) => {
   let categorizedFiles;
   let gistFiles;
   let categories;
   const savedFiles = [];
 
   try {
-    const gistId = await getSeedUserGistId();
+    const gistId = await getGistId(userId);
     const promises = [getCategorizedFiles(), getGistFiles(gistId), getCategoriesTable()];
     [categorizedFiles, gistFiles, categories] = await Promise.all(promises);
   } catch (e) {
