@@ -7,6 +7,7 @@ const { createToken } = require('../src/utils/auth');
 const { formatErr } = require('./utils/errors');
 
 const errors = {
+  // ID
   uuid: id => `Invalid UUID '${id}'`,
   idDNE: id => `No user with ID '${id}'`,
   // POST
