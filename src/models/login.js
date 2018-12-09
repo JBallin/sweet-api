@@ -20,6 +20,12 @@ const login = async ({ email, password }) => {
   } catch (e) {
     return errors.bcrypt(e);
   }
+const stripHashedPwd = (user) => {
+  const userWithoutHashedPwd = { ...user };
+  delete userWithoutHashedPwd.hashed_pwd;
+  return userWithoutHashedPwd;
+};
+
 };
 
 module.exports = { login };
