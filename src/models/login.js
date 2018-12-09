@@ -10,7 +10,9 @@ const loginWithTokenId = async (id) => {
   return user;
 };
 
+const loginWithCredentials = async ({ email, password }) => {
   let isPasswordValid;
+  let user;
   try {
     user = await knex('users').where('email', email.toLowerCase()).first();
     if (!user) return errors.invalidLogin;
@@ -20,12 +22,12 @@ const loginWithTokenId = async (id) => {
   try {
     isPasswordValid = bcrypt.compareSync(password, user.hashed_pwd);
     if (!isPasswordValid) return errors.invalidLogin;
-    const userResponse = { ...user };
-    delete userResponse.hashed_pwd;
-    return userResponse;
   } catch (e) {
     return errors.bcrypt(e);
   }
+  return user;
+};
+
 const stripHashedPwd = (user) => {
   const userWithoutHashedPwd = { ...user };
   delete userWithoutHashedPwd.hashed_pwd;
