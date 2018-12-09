@@ -86,9 +86,11 @@ const validateId = async (req, res, next) => {
 };
 
 const validateLoginBody = (req, res, next) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    return next(errors.missingLogin.error);
+  if (!req.tokenId) {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return next(errors.missingLogin.error);
+    }
   }
   return next();
 };
