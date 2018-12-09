@@ -112,6 +112,22 @@ const validateJWT = (req, res, next) => {
   return next();
 };
 
+const tryTokenLoginAndStoreId = (req, res, next) => {
+  const { token } = req.cookies;
+  if (token) {
+    const id = auth.getTokenId(token);
+    if (id.error) return next(errors.invalidJWT(id.error).error);
+    req.tokenId = id;
+  }
+  return next();
+};
+
 module.exports = {
-  validateUser, validateId, validateUserUpdate, validateLoginBody, validateGistId, validateJWT,
+  validateUser,
+  validateId,
+  validateUserUpdate,
+  validateLoginBody,
+  validateGistId,
+  validateJWT,
+  tryTokenLoginAndStoreId,
 };
