@@ -56,6 +56,8 @@ const updateUser = async (id, body) => {
     const { password, email } = updateRequest;
     const updatedFields = [...Object.keys(body), 'updated_at'];
 
+    const isCurrPwdValid = await checkCurrentPassword(id, currentPassword);
+    if (isCurrPwdValid.error) return isCurrPwdValid;
 
     if (password) {
       updateRequest.hashed_pwd = bcrypt.hashSync(password, 10);
@@ -81,7 +83,10 @@ const updateUser = async (id, body) => {
   }
 };
 
-const deleteUser = async (id) => {
+const deleteUser = async (id, currentPassword) => {
+  const isCurrPwdValid = await checkCurrentPassword(id, currentPassword);
+  if (isCurrPwdValid.error) return isCurrPwdValid;
+
   try {
     return await knex('users').where('id', id).del();
   } catch (e) {
