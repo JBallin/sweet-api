@@ -45,6 +45,12 @@ const badId = '1';
 const seedToken = createToken({ id: seedUser.id });
 const invalidToken = createToken({ id: seedUser.id }, 0);
 const wrongUserToken = createToken({ id: uuidThatDNE });
+const seedUserInfoWithCurrPwd = {
+  email: seedUser.email,
+  gist_id: seedUser.gist_id,
+  username: seedUser.username,
+  currentPassword: validCurrPwd,
+};
 
 describe('/users', () => {
   describe('GET', () => {
@@ -283,6 +289,126 @@ describe('/users/:id', () => {
             })
             .then(done);
         });
+    });
+    describe('PUT with existing data', () => {
+      beforeEach((done) => {
+        request(app)
+          .post('/users')
+          .send(payloadWithPassword)
+          .expect(201, done);
+      });
+
+      it('error with existing username', (done) => {
+        request(app)
+          .put(`/users/${seedUser.id}`)
+          .set('Cookie', `token=${seedToken}`)
+          .send({ username: payload.username, currentPassword: validCurrPwd })
+          .expect(400)
+          .expect('Content-Type', /json/)
+          .end((err, res) => {
+            if (err) return done(formatErr(err, res));
+            assert.equal(res.body.error, errors.unique('username', payload.username));
+            return knex('users')
+              .where('id', seedUser.id)
+              .first()
+              .then((user) => {
+                assert.equal(user.username, seedUser.username);
+                assert.notEqual(user.username, payload.username);
+                assert.equal(user.gist_id, seedUser.gist_id);
+                assert.notEqual(user.gist_id, payload.gist_id);
+                assert.equal(user.email, seedUser.email);
+                assert.notEqual(user.email, payload.email);
+                assert.equal(user.hashed_pwd, seedUser.hashed_pwd);
+                assert.equal(user.name, seedUser.name);
+                assert.equal(user.id, seedUser.id);
+                assert.deepEqual(user.created_at, user.updated_at);
+              })
+              .then(done);
+          });
+      });
+      it('error with existing email', (done) => {
+        request(app)
+          .put(`/users/${seedUser.id}`)
+          .set('Cookie', `token=${seedToken}`)
+          .send({ email: payload.email, currentPassword: validCurrPwd })
+          .expect(400)
+          .expect('Content-Type', /json/)
+          .end((err, res) => {
+            if (err) return done(formatErr(err, res));
+            assert.equal(res.body.error, errors.unique('email', payload.email));
+            return knex('users')
+              .where('id', seedUser.id)
+              .first()
+              .then((user) => {
+                assert.equal(user.username, seedUser.username);
+                assert.notEqual(user.username, payload.username);
+                assert.equal(user.gist_id, seedUser.gist_id);
+                assert.notEqual(user.gist_id, payload.gist_id);
+                assert.equal(user.email, seedUser.email);
+                assert.notEqual(user.email, payload.email);
+                assert.equal(user.hashed_pwd, seedUser.hashed_pwd);
+                assert.equal(user.name, seedUser.name);
+                assert.equal(user.id, seedUser.id);
+                assert.deepEqual(user.created_at, user.updated_at);
+              })
+              .then(done);
+          });
+      });
+      it('error with existing gist_id', (done) => {
+        request(app)
+          .put(`/users/${seedUser.id}`)
+          .set('Cookie', `token=${seedToken}`)
+          .send({ gist_id: payload.gist_id, currentPassword: validCurrPwd })
+          .expect(400)
+          .expect('Content-Type', /json/)
+          .end((err, res) => {
+            if (err) return done(formatErr(err, res));
+            assert.equal(res.body.error, errors.unique('gist_id', payload.gist_id));
+            return knex('users')
+              .where('id', seedUser.id)
+              .first()
+              .then((user) => {
+                assert.equal(user.username, seedUser.username);
+                assert.notEqual(user.username, payload.username);
+                assert.equal(user.gist_id, seedUser.gist_id);
+                assert.notEqual(user.gist_id, payload.gist_id);
+                assert.equal(user.email, seedUser.email);
+                assert.notEqual(user.email, payload.email);
+                assert.equal(user.hashed_pwd, seedUser.hashed_pwd);
+                assert.equal(user.name, seedUser.name);
+                assert.equal(user.id, seedUser.id);
+                assert.deepEqual(user.created_at, user.updated_at);
+              })
+              .then(done);
+          });
+      });
+      it('should not error when given the updating users\' data', (done) => {
+        request(app)
+          .put(`/users/${seedUser.id}`)
+          .set('Cookie', `token=${seedToken}`)
+          .send(seedUserInfoWithCurrPwd)
+          .expect(200)
+          .expect('Content-Type', /json/)
+          .end((err, res) => {
+            if (err) return done(formatErr(err, res));
+            return knex('users')
+              .where('id', seedUser.id)
+              .first()
+              .then((user) => {
+                assert.equal(user.username, seedUser.username);
+                assert.notEqual(user.username, payload.username);
+                assert.equal(user.gist_id, seedUser.gist_id);
+                assert.notEqual(user.gist_id, payload.gist_id);
+                assert.equal(user.email, seedUser.email);
+                assert.notEqual(user.email, payload.email);
+                assert.equal(user.hashed_pwd, seedUser.hashed_pwd);
+                assert.equal(user.name, seedUser.name);
+                assert.equal(user.id, seedUser.id);
+                assert.notDeepEqual(user.created_at, user.updated_at);
+              })
+              .then(done);
+          });
+      });
     });
     it('should error with no token', (done) => {
       request(app)
