@@ -4,17 +4,21 @@ const auth = require('./auth');
 const errors = require('./errors');
 
 const expectedFields = ['gist_id', 'email', 'username', 'password'];
+const randomUUID = '44261a83-2fdf-4aac-a4f9-da0c53532e09';
 
-const isUserUnique = async (body) => {
+const isUserUnique = async (body, id = randomUUID) => {
   const uniques = ['gist_id', 'username', 'email'];
   const uniqueTests = uniques.map(async (unique) => {
-    const target = body[unique].toLowerCase();
-    const user = await knex('users').where(unique, target).first();
-    return user ? errors.unique(unique, target) : true;
+    const target = body[unique];
+    if (target) {
+      const user = await knex('users').whereNot('id', id).andWhere(unique, target.toLowerCase()).first();
+      if (user) return ({ unique, target });
+    }
+    return true;
   });
   const uniqueResults = await Promise.all(uniqueTests);
   const errs = uniqueResults.filter(res => res !== true);
-  return errs[0] || true;
+  return errs.length ? { errors: errs } : true;
 };
 
 const validateUser = async (req, res, next) => {
@@ -40,7 +44,10 @@ const validateUser = async (req, res, next) => {
   }
 
   const isUnique = await isUserUnique(body);
-  if (isUnique !== true) return next(isUnique.error);
+  if (isUnique !== true) {
+    const { unique, target } = isUnique.errors[0];
+    return next(errors.unique(unique, target).error);
+  }
 
   return next();
 };
