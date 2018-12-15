@@ -202,6 +202,8 @@ describe('/users/:id', () => {
           assert.equal(res.body.username, seedUser.username);
           assert.equal(res.body.email, seedUser.email);
           assert.equal(res.body.gist_id, seedUser.gist_id);
+          assert.isString(res.body.updated_at);
+          assert.isString(res.body.created_at);
           assert.notProperty(res.body, 'hashed_pwd');
           return done();
         });
