@@ -82,8 +82,6 @@ const updateUser = async (id, body) => {
 };
 
 const deleteUser = async (id) => {
-  const user = await getUser(id);
-  if (user.error) return user;
   try {
     return await knex('users').where('id', id).del();
   } catch (e) {
