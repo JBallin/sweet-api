@@ -379,7 +379,12 @@ describe('/users/:id', () => {
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.noToken);
-          return done();
+          return knex('users')
+            .where('id', seedId)
+            .then((user) => {
+              assert.lengthOf(user, 1);
+            })
+            .then(done);
         });
     });
     it('should error with invalid token', (done) => {
@@ -391,7 +396,12 @@ describe('/users/:id', () => {
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.invalidJWT);
-          return done();
+          return knex('users')
+            .where('id', seedId)
+            .then((user) => {
+              assert.lengthOf(user, 1);
+            })
+            .then(done);
         });
     });
     it('should error with unauthorized token', (done) => {
@@ -403,7 +413,12 @@ describe('/users/:id', () => {
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.unauthorized);
-          return done();
+          return knex('users')
+            .where('id', seedId)
+            .then((user) => {
+              assert.lengthOf(user, 1);
+            })
+            .then(done);
         });
     });
     it('should error with non-existent ID', (done) => {
@@ -415,7 +430,11 @@ describe('/users/:id', () => {
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.idDNE(uuidThatDNE));
-          return done();
+          return knex('users')
+            .then((users) => {
+              assert.lengthOf(users, 1);
+            })
+            .then(done);
         });
     });
   });
