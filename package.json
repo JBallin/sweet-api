@@ -7,6 +7,7 @@
     "dev": "nodemon ./bin/www",
     "test": "eslint . && NODE_ENV=test mocha",
     "testNoLint": "NODE_ENV=test mocha",
+    "testDebug": "NODE_ENV=test DEBUG=true mocha",
     "seed-dev": "knex migrate:rollback; knex migrate:latest; knex seed:run",
     "seed-prod": "heroku run 'knex migrate:rollback; knex migrate:latest; knex seed:run'",
     "get-users-dev": "psql sweet_dev -c 'select * from users;'",

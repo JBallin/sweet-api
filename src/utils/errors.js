@@ -1,7 +1,7 @@
-const { NODE_ENV } = process.env;
+const { NODE_ENV, DEBUG } = process.env;
 
 const createError = (status, message, err) => {
-  if (err && NODE_ENV !== 'test') console.error(err.message || err); // eslint-disable-line no-console
+  if (err && (NODE_ENV !== 'test' || DEBUG === 'true')) console.error(err.message || err); // eslint-disable-line no-console
   return ({ error: { status, message } });
 };
 
