@@ -52,17 +52,19 @@ const createUser = async (body) => {
 
 const updateUser = async (id, body) => {
   try {
-    const user = { ...body };
     const updatedFields = Object.keys(user);
-    if (user.password) {
-      user.hashed_pwd = bcrypt.hashSync(user.password, 10);
-      delete user.password;
+    const { currentPassword, ...updateRequest } = body;
+    const { password, email } = updateRequest;
+
+    if (password) {
+      updateRequest.hashed_pwd = bcrypt.hashSync(password, 10);
+      delete updateRequest.password;
     }
-    if (user.email) {
-      user.email = user.email.toLowerCase();
-    }
+
+    if (email) updateRequest.email = email.toLowerCase();
+
     const [editedUser] = await knex('users').where('id', id).update({
-      ...user, updated_at: knex.fn.now(),
+      ...updateRequest, updated_at: knex.fn.now(),
     }, '*');
     const userUpdates = updatedFields.reduce((res, field) => ({
       ...res, [field]: editedUser[field],
