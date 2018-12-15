@@ -257,7 +257,7 @@ describe('/users/:id', () => {
   });
 
   describe('PUT', () => {
-    it('should update user', (done) => {
+    it('should update user password, gist_id, email, and username', (done) => {
       request(app)
         .put(`/users/${seedUser.id}`)
         .set('Cookie', `token=${seedToken}`)
@@ -270,12 +270,18 @@ describe('/users/:id', () => {
             .where('id', seedUser.id)
             .first()
             .then((user) => {
-              assert.equal(payload.username, user.username);
-              assert.equal(payload.name, user.name);
+              assert.equal(user.username, payload.username);
+              assert.notEqual(user.username, seedUser.username);
+              assert.equal(user.gist_id, payload.gist_id);
+              assert.notEqual(user.gist_id, seedUser.gist_id);
+              assert.equal(user.email, payload.email);
+              assert.notEqual(user.email, seedUser.email);
+              assert.notEqual(user.hashed_pwd, seedUser.hashed_pwd);
+              assert.equal(user.name, seedUser.name);
               assert.equal(user.id, seedUser.id);
               assert.notDeepEqual(user.created_at, user.updated_at);
-              return done();
-            });
+            })
+            .then(done);
         });
     });
     it('should error with no token', (done) => {
@@ -287,7 +293,22 @@ describe('/users/:id', () => {
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.noToken);
-          return done();
+          return knex('users')
+            .where('id', seedUser.id)
+            .first()
+            .then((user) => {
+              assert.equal(user.username, seedUser.username);
+              assert.notEqual(user.username, payload.username);
+              assert.equal(user.gist_id, seedUser.gist_id);
+              assert.notEqual(user.gist_id, payload.gist_id);
+              assert.equal(user.email, seedUser.email);
+              assert.notEqual(user.email, payload.email);
+              assert.equal(user.hashed_pwd, seedUser.hashed_pwd);
+              assert.equal(user.name, seedUser.name);
+              assert.equal(user.id, seedUser.id);
+              assert.deepEqual(user.created_at, user.updated_at);
+            })
+            .then(done);
         });
     });
     it('should error with invalid token', (done) => {
@@ -300,7 +321,22 @@ describe('/users/:id', () => {
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.invalidJWT);
-          return done();
+          return knex('users')
+            .where('id', seedUser.id)
+            .first()
+            .then((user) => {
+              assert.equal(user.username, seedUser.username);
+              assert.notEqual(user.username, payload.username);
+              assert.equal(user.gist_id, seedUser.gist_id);
+              assert.notEqual(user.gist_id, payload.gist_id);
+              assert.equal(user.email, seedUser.email);
+              assert.notEqual(user.email, payload.email);
+              assert.equal(user.hashed_pwd, seedUser.hashed_pwd);
+              assert.equal(user.name, seedUser.name);
+              assert.equal(user.id, seedUser.id);
+              assert.deepEqual(user.created_at, user.updated_at);
+            })
+            .then(done);
         });
     });
     it('should error with unauthorized token', (done) => {
@@ -313,7 +349,22 @@ describe('/users/:id', () => {
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.unauthorized);
-          return done();
+          return knex('users')
+            .where('id', seedUser.id)
+            .first()
+            .then((user) => {
+              assert.equal(user.username, seedUser.username);
+              assert.notEqual(user.username, payload.username);
+              assert.equal(user.gist_id, seedUser.gist_id);
+              assert.notEqual(user.gist_id, payload.gist_id);
+              assert.equal(user.email, seedUser.email);
+              assert.notEqual(user.email, payload.email);
+              assert.equal(user.hashed_pwd, seedUser.hashed_pwd);
+              assert.equal(user.name, seedUser.name);
+              assert.equal(user.id, seedUser.id);
+              assert.deepEqual(user.created_at, user.updated_at);
+            })
+            .then(done);
         });
     });
     it('should error with empty body (but with current password)', (done) => {
@@ -326,7 +377,22 @@ describe('/users/:id', () => {
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.noBody);
-          return done();
+          return knex('users')
+            .where('id', seedUser.id)
+            .first()
+            .then((user) => {
+              assert.equal(user.username, seedUser.username);
+              assert.notEqual(user.username, payload.username);
+              assert.equal(user.gist_id, seedUser.gist_id);
+              assert.notEqual(user.gist_id, payload.gist_id);
+              assert.equal(user.email, seedUser.email);
+              assert.notEqual(user.email, payload.email);
+              assert.equal(user.hashed_pwd, seedUser.hashed_pwd);
+              assert.equal(user.name, seedUser.name);
+              assert.equal(user.id, seedUser.id);
+              assert.deepEqual(user.created_at, user.updated_at);
+            })
+            .then(done);
         });
     });
     it('should error with non-existent ID', (done) => {
@@ -338,7 +404,22 @@ describe('/users/:id', () => {
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.idDNE(uuidThatDNE));
-          return done();
+          return knex('users')
+            .where('id', seedUser.id)
+            .first()
+            .then((user) => {
+              assert.equal(user.username, seedUser.username);
+              assert.notEqual(user.username, payload.username);
+              assert.equal(user.gist_id, seedUser.gist_id);
+              assert.notEqual(user.gist_id, payload.gist_id);
+              assert.equal(user.email, seedUser.email);
+              assert.notEqual(user.email, payload.email);
+              assert.equal(user.hashed_pwd, seedUser.hashed_pwd);
+              assert.equal(user.name, seedUser.name);
+              assert.equal(user.id, seedUser.id);
+              assert.deepEqual(user.created_at, user.updated_at);
+            })
+            .then(done);
         });
     });
     it('should error with invalid fields', (done) => {
@@ -350,7 +431,22 @@ describe('/users/:id', () => {
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.invalid(['bad']));
-          return done();
+          return knex('users')
+            .where('id', seedUser.id)
+            .first()
+            .then((user) => {
+              assert.equal(user.username, seedUser.username);
+              assert.notEqual(user.username, payload.username);
+              assert.equal(user.gist_id, seedUser.gist_id);
+              assert.notEqual(user.gist_id, payload.gist_id);
+              assert.equal(user.email, seedUser.email);
+              assert.notEqual(user.email, payload.email);
+              assert.equal(user.hashed_pwd, seedUser.hashed_pwd);
+              assert.equal(user.name, seedUser.name);
+              assert.equal(user.id, seedUser.id);
+              assert.deepEqual(user.created_at, user.updated_at);
+            })
+            .then(done);
         });
     });
   });
