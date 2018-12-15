@@ -22,6 +22,8 @@ module.exports = {
   extra: fields => createError(400, `Extra fields: ${fields.join(', ').trim(',')}`),
   // PUT/DELETE
   invalid: fields => createError(400, `Invalid fields: ${fields.join(', ').trim(',')}`),
+  invalidCurrPwd: createError(401, 'Invalid current password'),
+  missingCurrPwd: createError(401, 'Missing current password'),
   updatePwd: createError(500, 'Error updating password'),
   // LOGIN
   missingLogin: createError(400, 'Missing email or password'),
