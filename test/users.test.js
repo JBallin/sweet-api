@@ -21,6 +21,8 @@ const errors = {
   invalidBSGist: 'Invalid ballin-scripts gist',
   // PUT
   invalid: fields => `Invalid fields: ${fields.join(', ').trim(',')}`,
+  invalidCurrPwd: 'Invalid current password',
+  missingCurrPwd: 'Missing current password',
   // TOKEN
   invalidJWT: 'Invalid token',
   unauthorized: 'Unauthorized',
@@ -33,6 +35,10 @@ const payload = {
   email: 'git_creator@gmail.com',
 };
 const payloadWithPassword = { ...payload, password: 'hello' };
+const invalidCurrPwd = 'invalid';
+const validCurrPwd = 'hello';
+const putPayloadWithCurrPassword = { ...payload, password: 'new', currentPassword: validCurrPwd };
+const putPayloadWithInvalidCurrPassword = { ...payload, password: 'new', currentPassword: invalidCurrPwd };
 const uuidThatDNE = 'de455777-255e-4e61-b53c-6dd942f1ad7c';
 const seedId = seeds[0].id;
 const badId = '1';
@@ -255,7 +261,7 @@ describe('/users/:id', () => {
       request(app)
         .put(`/users/${seedId}`)
         .set('Cookie', `token=${seedToken}`)
-        .send(payload)
+        .send(putPayloadWithCurrPassword)
         .expect(200)
         .expect('Content-Type', /json/)
         .end((err, res) => {
@@ -275,7 +281,7 @@ describe('/users/:id', () => {
     it('should error with no token', (done) => {
       request(app)
         .put(`/users/${seedId}`)
-        .send(payload)
+        .send(putPayloadWithCurrPassword)
         .expect(403)
         .expect('Content-Type', /json/)
         .end((err, res) => {
@@ -288,7 +294,7 @@ describe('/users/:id', () => {
       request(app)
         .put(`/users/${seedId}`)
         .set('Cookie', `token=${invalidToken}`)
-        .send(payload)
+        .send(putPayloadWithCurrPassword)
         .expect(403)
         .expect('Content-Type', /json/)
         .end((err, res) => {
@@ -301,7 +307,7 @@ describe('/users/:id', () => {
       request(app)
         .put(`/users/${seedId}`)
         .set('Cookie', `token=${wrongUserToken}`)
-        .send(payload)
+        .send(putPayloadWithCurrPassword)
         .expect(403)
         .expect('Content-Type', /json/)
         .end((err, res) => {
@@ -310,9 +316,11 @@ describe('/users/:id', () => {
           return done();
         });
     });
-    it('should error with empty body', (done) => {
+    it('should error with empty body (but with current password)', (done) => {
       request(app)
         .put(`/users/${seedId}`)
+        .set('Cookie', `token=${seedToken}`)
+        .send({ currentPassword: validCurrPwd })
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
@@ -324,7 +332,7 @@ describe('/users/:id', () => {
     it('should error with non-existent ID', (done) => {
       request(app)
         .put(`/users/${uuidThatDNE}`)
-        .send(payload)
+        .send(putPayloadWithCurrPassword)
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
@@ -336,7 +344,7 @@ describe('/users/:id', () => {
     it('should error with invalid fields', (done) => {
       request(app)
         .put(`/users/${seedId}`)
-        .send({ ...payload, bad: 'field' })
+        .send({ ...putPayloadWithCurrPassword, bad: 'field' })
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
@@ -350,6 +358,7 @@ describe('/users/:id', () => {
     it('should delete user', (done) => {
       request(app)
         .delete(`/users/${seedId}`)
+        .send({ currentPassword: validCurrPwd })
         .set('Cookie', `token=${seedToken}`)
         .expect(204)
         .end((err, res) => {
@@ -365,6 +374,7 @@ describe('/users/:id', () => {
     it('should error with no token', (done) => {
       request(app)
         .delete(`/users/${seedId}`)
+        .send({ currentPassword: validCurrPwd })
         .expect(403)
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
@@ -376,6 +386,7 @@ describe('/users/:id', () => {
       request(app)
         .delete(`/users/${seedId}`)
         .set('Cookie', `token=${invalidToken}`)
+        .send({ currentPassword: validCurrPwd })
         .expect(403)
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
@@ -387,6 +398,7 @@ describe('/users/:id', () => {
       request(app)
         .delete(`/users/${seedId}`)
         .set('Cookie', `token=${wrongUserToken}`)
+        .send({ currentPassword: validCurrPwd })
         .expect(403)
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
@@ -397,6 +409,7 @@ describe('/users/:id', () => {
     it('should error with non-existent ID', (done) => {
       request(app)
         .delete(`/users/${uuidThatDNE}`)
+        .send({ currentPassword: validCurrPwd })
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
