@@ -52,8 +52,9 @@ const validateUser = async (req, res, next) => {
   return next();
 };
 
-const validateUserUpdate = (req, res, next) => {
-  const { body } = req;
+const validateUserUpdate = async (req, res, next) => {
+  const { currentPassword, ...body } = req.body;
+  const { id } = req.params;
   const bodyKeys = Object.keys(body);
   if (!bodyKeys.length) {
     return next(errors.noBody.error);
@@ -68,6 +69,13 @@ const validateUserUpdate = (req, res, next) => {
   if (invalidFields.length) {
     return next(errors.invalid(invalidFields).error);
   }
+
+  const isUnique = await isUserUnique(body, id);
+  if (isUnique !== true) {
+    const { unique, target } = isUnique.errors[0];
+    return next(errors.unique(unique, target).error);
+  }
+
   return next();
 };
 
