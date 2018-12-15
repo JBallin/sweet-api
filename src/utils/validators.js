@@ -139,6 +139,11 @@ const tryTokenLoginAndStoreId = (req, res, next) => {
   return next();
 };
 
+const validateCurrPwdSent = (req, res, next) => {
+  if (!req.body.currentPassword) return next(errors.missingCurrPwd.error);
+  return next();
+};
+
 module.exports = {
   validateUser,
   validateId,
@@ -147,4 +152,5 @@ module.exports = {
   validateGistId,
   validateJWT,
   tryTokenLoginAndStoreId,
+  validateCurrPwdSent,
 };
