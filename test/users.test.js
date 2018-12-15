@@ -190,7 +190,7 @@ describe('/users', () => {
 
 describe('/users/:id', () => {
   describe('GET', () => {
-    it('should return user', (done) => {
+    it('should return user (without hashed_pwd)', (done) => {
       request(app)
         .get(`/users/${seedUser.id}`)
         .set('Cookie', [`token=${seedToken}`])
@@ -200,6 +200,9 @@ describe('/users/:id', () => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.name, seedUser.name);
           assert.equal(res.body.username, seedUser.username);
+          assert.equal(res.body.email, seedUser.email);
+          assert.equal(res.body.gist_id, seedUser.gist_id);
+          assert.notProperty(res.body, 'hashed_pwd');
           return done();
         });
     });
