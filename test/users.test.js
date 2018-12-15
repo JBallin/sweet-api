@@ -311,6 +311,62 @@ describe('/users/:id', () => {
             .then(done);
         });
     });
+    it('should error without current password', (done) => {
+      request(app)
+        .put(`/users/${seedUser.id}`)
+        .set('Cookie', `token=${seedToken}`)
+        .send(payload)
+        .expect(401)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) return done(formatErr(err, res));
+          assert.equal(res.body.error, errors.missingCurrPwd);
+          return knex('users')
+            .where('id', seedUser.id)
+            .first()
+            .then((user) => {
+              assert.equal(user.username, seedUser.username);
+              assert.notEqual(user.username, payload.username);
+              assert.equal(user.gist_id, seedUser.gist_id);
+              assert.notEqual(user.gist_id, payload.gist_id);
+              assert.equal(user.email, seedUser.email);
+              assert.notEqual(user.email, payload.email);
+              assert.equal(user.hashed_pwd, seedUser.hashed_pwd);
+              assert.equal(user.name, seedUser.name);
+              assert.equal(user.id, seedUser.id);
+              assert.deepEqual(user.created_at, user.updated_at);
+            })
+            .then(done);
+        });
+    });
+    it('should error with invalid current password', (done) => {
+      request(app)
+        .put(`/users/${seedUser.id}`)
+        .set('Cookie', `token=${seedToken}`)
+        .send(putPayloadWithInvalidCurrPassword)
+        .expect(401)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) return done(formatErr(err, res));
+          assert.equal(res.body.error, errors.invalidCurrPwd);
+          return knex('users')
+            .where('id', seedUser.id)
+            .first()
+            .then((user) => {
+              assert.equal(user.username, seedUser.username);
+              assert.notEqual(user.username, payload.username);
+              assert.equal(user.gist_id, seedUser.gist_id);
+              assert.notEqual(user.gist_id, payload.gist_id);
+              assert.equal(user.email, seedUser.email);
+              assert.notEqual(user.email, payload.email);
+              assert.equal(user.hashed_pwd, seedUser.hashed_pwd);
+              assert.equal(user.name, seedUser.name);
+              assert.equal(user.id, seedUser.id);
+              assert.deepEqual(user.created_at, user.updated_at);
+            })
+            .then(done);
+        });
+    });
     it('should error with invalid token', (done) => {
       request(app)
         .put(`/users/${seedUser.id}`)
@@ -463,6 +519,39 @@ describe('/users/:id', () => {
             .where('id', seedUser.id)
             .then((user) => {
               assert.lengthOf(user, 0);
+            })
+            .then(done);
+        });
+    });
+    it('should error with invalid currPassword', (done) => {
+      request(app)
+        .delete(`/users/${seedUser.id}`)
+        .send({ currentPassword: invalidCurrPwd })
+        .set('Cookie', `token=${seedToken}`)
+        .expect(401)
+        .end((err, res) => {
+          if (err) return done(formatErr(err, res));
+          assert.equal(res.body.error, errors.invalidCurrPwd);
+          return knex('users')
+            .where('id', seedUser.id)
+            .then((user) => {
+              assert.lengthOf(user, 1);
+            })
+            .then(done);
+        });
+    });
+    it('should error without currPassword', (done) => {
+      request(app)
+        .delete(`/users/${seedUser.id}`)
+        .set('Cookie', `token=${seedToken}`)
+        .expect(401)
+        .end((err, res) => {
+          if (err) return done(formatErr(err, res));
+          assert.equal(res.body.error, errors.missingCurrPwd);
+          return knex('users')
+            .where('id', seedUser.id)
+            .then((user) => {
+              assert.lengthOf(user, 1);
             })
             .then(done);
         });
