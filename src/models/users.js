@@ -52,9 +52,10 @@ const createUser = async (body) => {
 
 const updateUser = async (id, body) => {
   try {
-    const updatedFields = Object.keys(user);
     const { currentPassword, ...updateRequest } = body;
     const { password, email } = updateRequest;
+    const updatedFields = [...Object.keys(body), 'updated_at'];
+
 
     if (password) {
       updateRequest.hashed_pwd = bcrypt.hashSync(password, 10);
