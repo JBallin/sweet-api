@@ -25,7 +25,7 @@ const updateUser = async (req, res, next) => {
 };
 
 const deleteUser = async (req, res, next) => {
-  const deleted = await model.deleteUser(req.params.id);
+  const deleted = await model.deleteUser(req.params.id, req.body.currentPassword);
   if (deleted.error) next(deleted.error);
   else res.sendStatus(204);
 };
