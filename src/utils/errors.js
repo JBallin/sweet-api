@@ -20,13 +20,13 @@ module.exports = {
   missing: fields => createError(400, `Missing fields: ${fields.join(', ').trim(',')}`),
   unique: (field, key) => createError(400, `User with ${field} '${key}' already exists`),
   extra: fields => createError(400, `Extra fields: ${fields.join(', ').trim(',')}`),
-  // PUT
+  // PUT/DELETE
   invalid: fields => createError(400, `Invalid fields: ${fields.join(', ').trim(',')}`),
+  updatePwd: createError(500, 'Error updating password'),
   // LOGIN
   missingLogin: createError(400, 'Missing email or password'),
   invalidLogin: createError(401, 'Invalid credentials. Please try again.'),
   bcrypt: e => createError(500, 'Error comparing password', e),
-  updatePwd: createError(500, 'Error updating password'),
   jwtKeyMissing: createError(500, 'Missing JWT_KEY'),
   // LOGOUT
   logout: e => createError(500, 'Error logging out', e),
