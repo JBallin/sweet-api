@@ -6,8 +6,12 @@ const errors = require('../utils/errors');
 const getAllUsers = () => knex('users').select('id', 'username')
   .catch(e => errors.fetchDB('users', e));
 
-const getUser = id => knex('users').where('id', id).first()
-  .catch(e => errors.fetchDB('user', e));
+const getUser = async (id) => {
+  const user = await knex('users').where('id', id).first()
+    .catch(e => errors.fetchDB('user', e));
+  delete user.hashed_pwd;
+  return user;
+};
 
 const toLowerCase = obj => Object.keys(obj).reduce((res, key) => ({
   ...res, [key]: obj[key].toLowerCase(),
