@@ -11,7 +11,7 @@ router.get('/', ctrl.getAllUsers);
 router.get('/:id', validateId, validateJWT, ctrl.getUser);
 router.get('/:id/files', validateId, validateJWT, filesCtrl.getFiles);
 router.post('/', validateUser, validateGistId, ctrl.createUser);
-router.put('/:id', validateId, validateCurrPwdSent, validateUserUpdate, validateJWT, ctrl.updateUser);
+router.put('/:id', validateId, validateCurrPwdSent, validateUserUpdate, validateGistId, validateJWT, ctrl.updateUser);
 router.delete('/:id', validateId, validateCurrPwdSent, validateJWT, ctrl.deleteUser);
 
 module.exports = router;
