@@ -119,6 +119,12 @@ const validateGistId = async (req, res, next) => {
   }
 };
 
+const validateGistIdIfExists = (req, res, next) => {
+  const { gist_id: gistId } = req.body;
+  if (gistId) validateGistId(req, res, next);
+  else next();
+};
+
 const validateJWT = (req, res, next) => {
   const { token } = req.cookies;
   const { id } = req.params;
@@ -153,4 +159,5 @@ module.exports = {
   validateJWT,
   tryTokenLoginAndStoreId,
   validateCurrPwdSent,
+  validateGistIdIfExists,
 };
