@@ -295,7 +295,7 @@ describe('/users/:id', () => {
             .then(done);
         });
     });
-    describe('PUT with existing data', () => {
+    describe('should error with existing...', () => {
       beforeEach((done) => {
         request(app)
           .post('/users')
@@ -303,7 +303,7 @@ describe('/users/:id', () => {
           .expect(201, done);
       });
 
-      it('error with existing username', (done) => {
+      it('username', (done) => {
         request(app)
           .put(`/users/${seedUser.id}`)
           .set('Cookie', `token=${seedToken}`)
@@ -331,7 +331,7 @@ describe('/users/:id', () => {
               .then(done);
           });
       });
-      it('error with existing email', (done) => {
+      it('email', (done) => {
         request(app)
           .put(`/users/${seedUser.id}`)
           .set('Cookie', `token=${seedToken}`)
@@ -359,7 +359,7 @@ describe('/users/:id', () => {
               .then(done);
           });
       });
-      it('error with existing gist_id', (done) => {
+      it('gist_id', (done) => {
         request(app)
           .put(`/users/${seedUser.id}`)
           .set('Cookie', `token=${seedToken}`)
