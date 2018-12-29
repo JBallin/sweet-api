@@ -45,6 +45,8 @@ const badId = '1';
 const seedToken = createToken({ id: seedUser.id });
 const invalidToken = createToken({ id: seedUser.id }, 0);
 const wrongUserToken = createToken({ id: uuidThatDNE });
+const invalidGistId = '2';
+const invalidBSGistId = '1';
 const seedUserInfoWithCurrPwd = {
   email: seedUser.email,
   gist_id: seedUser.gist_id,
@@ -160,23 +162,21 @@ describe('/users', () => {
         });
     });
     it('should error with invalid gist_id', (done) => {
-      const testId = '2';
       request(app)
         .post('/users')
-        .send({ ...payloadWithPassword, gist_id: testId })
+        .send({ ...payloadWithPassword, gist_id: invalidGistId })
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
-          assert.equal(res.body.error, errors.gistDNE(testId));
+          assert.equal(res.body.error, errors.gistDNE(invalidGistId));
           return done();
         });
     });
     it('should error with invalid ballin-scripts gist_id', (done) => {
-      const testId = '1';
       request(app)
         .post('/users')
-        .send({ ...payloadWithPassword, gist_id: testId })
+        .send({ ...payloadWithPassword, gist_id: invalidBSGistId })
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
