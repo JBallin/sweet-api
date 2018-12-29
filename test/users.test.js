@@ -612,6 +612,7 @@ describe('/users/:id', () => {
     it('should error with invalid fields', (done) => {
       request(app)
         .put(`/users/${seedUser.id}`)
+        .set('Cookie', `token=${seedToken}`)
         .send({ ...putPayloadWithCurrPassword, bad: 'field' })
         .expect(400)
         .expect('Content-Type', /json/)
