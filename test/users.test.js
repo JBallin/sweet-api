@@ -17,7 +17,6 @@ const errors = {
   extra: fields => `Extra fields: ${fields.join(', ').trim(',')}`,
   // GIST_ID
   gistDNE: id => `No gist with ID '${id}'`,
-  noGistId: 'No gist ID provided',
   invalidBSGist: 'Invalid ballin-scripts gist',
   // PUT
   invalid: fields => `Invalid fields: ${fields.join(', ').trim(',')}`,
