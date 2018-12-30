@@ -17,30 +17,6 @@ const toLowerCase = obj => Object.keys(obj).reduce((res, key) => ({
   ...res, [key]: obj[key].toLowerCase(),
 }), {});
 
-const getHashedPassword = async (id) => {
-  const { hashed_pwd: hashedPassword } = await knex('users').where('id', id).select('hashed_pwd').first();
-  return hashedPassword;
-};
-
-const checkCurrentPassword = async (id, currentPassword) => {
-  let currentHashedPassword;
-  try {
-    currentHashedPassword = await getHashedPassword(id);
-  } catch (e) {
-    return errors.fetchDB('hashed_pwd', e);
-  }
-
-  try {
-    if (!currentPassword || !bcrypt.compareSync(currentPassword, currentHashedPassword)) {
-      return errors.invalidCurrPwd;
-    }
-  } catch (e) {
-    return errors.bcrypt(e);
-  }
-
-  return true;
-};
-
 const createUser = async (body) => {
   try {
     const id = uuid();
@@ -56,12 +32,9 @@ const createUser = async (body) => {
 
 const updateUser = async (id, body) => {
   try {
-    const { currentPassword, ...updateRequest } = body;
+    const updateRequest = { ...body };
     const { password, email } = updateRequest;
     const updatedFields = [...Object.keys(body), 'updated_at'];
-
-    const isCurrPwdValid = await checkCurrentPassword(id, currentPassword);
-    if (isCurrPwdValid.error) return isCurrPwdValid;
 
     if (password) {
       updateRequest.hashed_pwd = bcrypt.hashSync(password, 10);
@@ -87,10 +60,7 @@ const updateUser = async (id, body) => {
   }
 };
 
-const deleteUser = async (id, currentPassword) => {
-  const isCurrPwdValid = await checkCurrentPassword(id, currentPassword);
-  if (isCurrPwdValid.error) return isCurrPwdValid;
-
+const deleteUser = async (id) => {
   try {
     return await knex('users').where('id', id).del();
   } catch (e) {

@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const knex = require('../../knex');
 const { validateGist } = require('./gistAPI');
 const auth = require('./auth');
@@ -145,8 +146,37 @@ const tryTokenLoginAndStoreId = (req, res, next) => {
   return next();
 };
 
-const validateCurrPwdSent = (req, res, next) => {
-  if (!req.body.currentPassword) return next(errors.missingCurrPwd.error);
+const getHashedPassword = async (id) => {
+  const { hashed_pwd: hashedPassword } = await knex('users').where('id', id).select('hashed_pwd').first();
+  return hashedPassword;
+};
+
+const checkCurrentPassword = async (id, currentPassword) => {
+  let currentHashedPassword;
+  try {
+    currentHashedPassword = await getHashedPassword(id);
+  } catch (e) {
+    return errors.fetchDB('hashed_pwd', e);
+  }
+
+  try {
+    if (!currentPassword || !bcrypt.compareSync(currentPassword, currentHashedPassword)) {
+      return errors.invalidCurrPwd;
+    }
+  } catch (e) {
+    return errors.bcrypt(e);
+  }
+
+  return true;
+};
+
+const validateCurrPwd = async (req, res, next) => {
+  const { currentPassword } = req.body;
+  const { id } = req.params;
+  if (!currentPassword) return next(errors.missingCurrPwd.error);
+  const checkCurrPwdRes = await checkCurrentPassword(id, currentPassword);
+  if (checkCurrPwdRes.error) return next(checkCurrPwdRes.error);
+  delete req.body.currentPassword;
   return next();
 };
 
@@ -158,6 +188,6 @@ module.exports = {
   validateGistId,
   validateJWT,
   tryTokenLoginAndStoreId,
-  validateCurrPwdSent,
+  validateCurrPwd,
   validateGistIdIfExists,
 };
