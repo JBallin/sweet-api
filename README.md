@@ -1,17 +1,24 @@
-API for [My Sweet Config](https://github.com/JBallin/sweet-config).
+# Sweet API
 
-### Installation
+Frontend: [My Sweet Config](https://github.com/JBallin/sweet-config)
+<br>
+Deployed API: [sweet-api.herokuapp.com][1]
 
-**Required:** Generate a gist using [ballin-scripts](https://github.com/JBallin/ballin-scripts).
+### Usage
 
-```
-$ git clone https://github.com/JBallin/sweet-api.git
-$ cd sweet-api
+```shell
 $ npm install
-$ echo "GIST_ID=$(ballin_config get gu.id)" > .env
-$ createdb seed_dev
+$ echo 'JWT_KEY=$YOUR_JWT_KEY' > .env
+$ createdb sweet_dev
 $ npm run seed-dev
 $ npm run dev
 ```
 
-Visit `localhost:8082` to see the available routes!
+### Testing
+
+```shell
+$ createdb sweet_test
+$ npm test
+```
+
+[1]: https://sweet-api.herokuapp.com

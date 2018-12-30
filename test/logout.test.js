@@ -2,13 +2,12 @@ const request = require('supertest');
 const app = require('../src/app');
 const { formatErr } = require('./utils/errors');
 
-describe('/categories', () => {
-  describe('GET', () => {
-    it('should return JSON', (done) => {
+describe('/logout', () => {
+  describe('POST', () => {
+    it('should logout user', (done) => {
       request(app)
-        .get('/categories')
-        .expect('Content-Type', /json/)
-        .expect(200)
+        .post('/logout')
+        .expect(205)
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
           return done();

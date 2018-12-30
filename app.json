@@ -1,8 +1,18 @@
 {
   "name": "sweet-api",
   "scripts": {
+    "postdeploy": "knex migrate:rollback; knex migrate:latest; knex seed:run"
   },
   "env": {
+    "APP_URL": {
+      "required": true
+    },
+    "GITHUB_TOKEN": {
+      "required": true
+    },
+    "JWT_KEY": {
+      "required": true
+    }
   },
   "formation": {
   },
