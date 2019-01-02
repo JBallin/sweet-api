@@ -24,7 +24,7 @@ async function fetchGist(gistId) {
 
     return gist;
   } catch (e) {
-    return errors.githubApiError(e);
+    return errors.githubAPIError(e);
   }
 }
 
