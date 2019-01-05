@@ -6,13 +6,24 @@
   </head>
   <body>
     <h1>My Sweet Config API</h1>
-    <h4>Routes:</h4>
-    <ul>
-      <li><a href='/categories'>/categories</a></li>
-      <li><a href='/fileTypes'>/fileTypes</a></li>
-      <li><a href='/users'>/users</a></li>
-      <li><a href='/files'>/files</a></li>
-      <li><a href='/validateGist/1'>/validateGist/:gistId</a></li>
-    </ul>
+
+    <div>
+      <h4>Unprotected Routes</h4>
+      <ul>
+        <li><a href='/users'>/users</a></li>
+        <li><a href='/categories'>/categories</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4>Protected/Auth Routes</h4>
+      <ul>
+        <li>/users/:id</li>
+        <li>/login</li>
+        <li>/logout</li>
+        <li>/fileTypes</li>
+      </ul>
+    </div>
+
   </body>
 </html>
