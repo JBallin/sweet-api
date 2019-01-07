@@ -22,6 +22,11 @@ const isUserUnique = async (body, id = randomUUID) => {
   return errs.length ? { errors: errs } : true;
 };
 
+const isEmailValid = (email) => {
+  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(String(email).toLowerCase());
+};
+
 const validateUser = async (req, res, next) => {
   const { body } = req;
   const bodyKeys = Object.keys(body);
@@ -42,6 +47,10 @@ const validateUser = async (req, res, next) => {
   const remainingBodyKeys = bodyKeys.filter(k => !expectedFields.includes(k));
   if (remainingBodyKeys.length) {
     return next(errors.extra(remainingBodyKeys).error);
+  }
+
+  if (!isEmailValid(body.email)) {
+    return next(errors.invalidEmail(body.email).error);
   }
 
   const isUnique = await isUserUnique(body);
