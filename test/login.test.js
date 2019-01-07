@@ -9,6 +9,7 @@ const errors = {
   missingLogin: 'Missing email or password',
   invalidLogin: 'Invalid credentials. Please try again.',
   invalidJWT: 'Invalid token',
+  invalidEmail: email => `'${email}' is not a valid email`,
 };
 
 const invalid = { email: seeds[0].email, password: 'HELLO' };
@@ -18,6 +19,7 @@ const uuidThatDNE = 'de455777-255e-4e61-b53c-6dd942f1ad7c';
 const seedToken = createToken({ id: seedId });
 const invalidToken = createToken({ id: seedId }, 0);
 const wrongUserToken = createToken({ id: uuidThatDNE });
+const invalidEmail = 'invalid';
 
 describe('/login', () => {
   describe('POST', () => {
@@ -133,6 +135,18 @@ describe('/login', () => {
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.missingLogin);
+          return done();
+        });
+    });
+    it('should error invalid email', (done) => {
+      request(app)
+        .post('/login')
+        .send({ ...valid, email: invalidEmail })
+        .expect(400)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) return done(formatErr(err, res));
+          assert.equal(res.body.error, errors.invalidEmail(invalidEmail));
           return done();
         });
     });
