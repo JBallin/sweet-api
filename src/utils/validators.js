@@ -27,6 +27,10 @@ const isEmailValid = (email) => {
   return re.test(String(email).toLowerCase());
 };
 
+const doesUsernameHaveSpaces = username => username.includes(' ');
+
+const isUsernameTooLong = username => username.length > 36;
+
 const validateUser = async (req, res, next) => {
   const { body } = req;
   const bodyKeys = Object.keys(body);
@@ -51,6 +55,12 @@ const validateUser = async (req, res, next) => {
 
   if (!isEmailValid(body.email)) {
     return next(errors.invalidEmail(body.email).error);
+  }
+  if (doesUsernameHaveSpaces(body.username)) {
+    return next(errors.invalidUsernameSpaces.error);
+  }
+  if (isUsernameTooLong(body.username)) {
+    return next(errors.invalidUsernameLength.error);
   }
 
   const isUnique = await isUserUnique(body);
