@@ -126,6 +126,9 @@ const validateLoginBody = (req, res, next) => {
     if (!email || !password) {
       return next(errors.missingLogin.error);
     }
+    if (!isEmailValid(email)) {
+      return next(errors.invalidEmail(email).error);
+    }
   }
   return next();
 };
