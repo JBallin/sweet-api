@@ -16,6 +16,8 @@ const errors = {
   unique: (field, key) => `User with ${field} '${key}' already exists`,
   extra: fields => `Extra fields: ${fields.join(', ').trim(',')}`,
   invalidEmail: email => `'${email}' is not a valid email`,
+  invalidUsernameSpaces: 'Username cannot contain spaces',
+  invalidUsernameLength: 'Username cannot exceed 36 characters',
   // GIST_ID
   gistDNE: id => `No gist with ID '${id}'`,
   invalidBSGist: 'Invalid ballin-scripts gist',
@@ -54,6 +56,8 @@ const seedUserInfoWithCurrPwd = {
   currentPassword: validCurrPwd,
 };
 const invalidEmail = 'invalid';
+const usernameWithSpaces = 'user name';
+const longUsername = 'ThisUsernameIsJustTooLongUnfortunately';
 
 describe('/users', () => {
   describe('GET', () => {
@@ -195,6 +199,30 @@ describe('/users', () => {
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.invalidEmail(invalidEmail));
+          return done();
+        });
+    });
+    it('should error with username that has spaces', (done) => {
+      request(app)
+        .post('/users')
+        .send({ ...payloadWithPassword, username: usernameWithSpaces })
+        .expect(400)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) return done(formatErr(err, res));
+          assert.equal(res.body.error, errors.invalidUsernameSpaces);
+          return done();
+        });
+    });
+    it('should error with username longer than 36 characters', (done) => {
+      request(app)
+        .post('/users')
+        .send({ ...payloadWithPassword, username: longUsername })
+        .expect(400)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) return done(formatErr(err, res));
+          assert.equal(res.body.error, errors.invalidUsernameLength);
           return done();
         });
     });

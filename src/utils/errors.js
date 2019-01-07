@@ -21,6 +21,8 @@ module.exports = {
   unique: (field, key) => createError(400, `User with ${field} '${key}' already exists`),
   extra: fields => createError(400, `Extra fields: ${fields.join(', ').trim(',')}`),
   invalidEmail: email => createError(400, `'${email}' is not a valid email`),
+  invalidUsernameSpaces: createError(400, 'Username cannot contain spaces'),
+  invalidUsernameLength: createError(400, 'Username cannot exceed 36 characters'),
   // PUT/DELETE
   invalid: fields => createError(400, `Invalid fields: ${fields.join(', ').trim(',')}`),
   invalidCurrPwd: createError(401, 'Invalid current password'),
