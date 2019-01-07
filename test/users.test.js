@@ -15,6 +15,7 @@ const errors = {
   missing: fields => `Missing fields: ${fields.join(', ').trim(',')}`,
   unique: (field, key) => `User with ${field} '${key}' already exists`,
   extra: fields => `Extra fields: ${fields.join(', ').trim(',')}`,
+  invalidEmail: email => `'${email}' is not a valid email`,
   // GIST_ID
   gistDNE: id => `No gist with ID '${id}'`,
   invalidBSGist: 'Invalid ballin-scripts gist',
@@ -52,6 +53,7 @@ const seedUserInfoWithCurrPwd = {
   username: seedUser.username,
   currentPassword: validCurrPwd,
 };
+const invalidEmail = 'invalid';
 
 describe('/users', () => {
   describe('GET', () => {
@@ -181,6 +183,18 @@ describe('/users', () => {
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.invalidBSGist);
+          return done();
+        });
+    });
+    it('should error with invalid email', (done) => {
+      request(app)
+        .post('/users')
+        .send({ ...payloadWithPassword, email: invalidEmail })
+        .expect(400)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) return done(formatErr(err, res));
+          assert.equal(res.body.error, errors.invalidEmail(invalidEmail));
           return done();
         });
     });
