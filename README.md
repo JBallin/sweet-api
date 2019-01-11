@@ -4,7 +4,15 @@ Frontend: [My Sweet Config](https://github.com/JBallin/sweet-config)
 <br>
 Deployed API: [sweet-api.herokuapp.com][1]
 
-### Usage
+## Screenshots
+
+##### 66 Integration Tests
+![tests](screenshots/tests.png?raw=true "tests")
+
+##### 32 Custom Errors
+![custom errors](screenshots/errors.png?raw=true "custom errors")
+
+## Usage
 
 ```shell
 $ npm install
@@ -14,7 +22,7 @@ $ npm run seed-dev
 $ npm run dev
 ```
 
-### Testing
+## Testing
 
 ```shell
 $ createdb sweet_test
