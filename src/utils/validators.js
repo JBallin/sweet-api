@@ -3,6 +3,7 @@ const knex = require('../../knex');
 const { validateGist } = require('./gistAPI');
 const auth = require('./auth');
 const errors = require('./errors');
+const { seeds } = require('../../seeds/001users');
 
 const expectedFields = ['gist_id', 'email', 'username', 'password'];
 const randomUUID = '44261a83-2fdf-4aac-a4f9-da0c53532e09';
@@ -102,6 +103,11 @@ const validateUserUpdate = async (req, res, next) => {
 const validateUUID = (id) => {
   const re = /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i;
   return re.test(id);
+};
+
+const validateNotDemo = async (req, res, next) => {
+  const { id } = req.params;
+  return id === seeds[0].id ? next(errors.demoDisabled.error) : next();
 };
 
 const validateId = async (req, res, next) => {
@@ -212,4 +218,5 @@ module.exports = {
   tryTokenLoginAndStoreId,
   validateCurrPwd,
   validateGistIdIfExists,
+  validateNotDemo,
 };

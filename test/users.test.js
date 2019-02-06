@@ -29,6 +29,7 @@ const errors = {
   invalidJWT: 'Invalid token',
   unauthorized: 'Unauthorized',
   noToken: 'Missing token',
+  demoDisabled: 'Updating or deleting the demo account is disabled',
 };
 
 const payload = {
@@ -36,7 +37,7 @@ const payload = {
   username: 'super_coder',
   email: 'git_creator@gmail.com',
 };
-const seedUser = seeds[0];
+const [demoUser, testUser] = seeds;
 const payloadWithPassword = { ...payload, password: 'hello' };
 const invalidCurrPwd = 'invalid';
 const validCurrPwd = 'hello';
@@ -44,15 +45,16 @@ const putPayloadWithCurrPassword = { ...payload, password: 'new', currentPasswor
 const putPayloadWithInvalidCurrPassword = { ...payload, password: 'new', currentPassword: invalidCurrPwd };
 const uuidThatDNE = 'de455777-255e-4e61-b53c-6dd942f1ad7c';
 const badId = '1';
-const seedToken = createToken({ id: seedUser.id });
-const invalidToken = createToken({ id: seedUser.id }, 0);
+const testToken = createToken({ id: testUser.id });
+const demoToken = createToken({ id: demoUser.id });
+const invalidToken = createToken({ id: testUser.id }, 0);
 const wrongUserToken = createToken({ id: uuidThatDNE });
 const invalidGistId = '2';
 const invalidBSGistId = '1';
-const seedUserInfoWithCurrPwd = {
-  email: seedUser.email,
-  gist_id: seedUser.gist_id,
-  username: seedUser.username,
+const testUserInfoWithCurrPwd = {
+  email: testUser.email,
+  gist_id: testUser.gist_id,
+  username: testUser.username,
   currentPassword: validCurrPwd,
 };
 const invalidEmail = 'invalid';
@@ -68,8 +70,8 @@ describe('/users', () => {
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
-          const { id, username } = seedUser;
-          assert.deepEqual(res.body[0], {
+          const { id, username } = testUser;
+          assert.deepEqual(res.body[1], {
             id, username,
           });
           return done();
@@ -133,36 +135,36 @@ describe('/users', () => {
     it('should error with existing email', (done) => {
       request(app)
         .post('/users')
-        .send({ ...payloadWithPassword, email: seedUser.email })
+        .send({ ...payloadWithPassword, email: testUser.email })
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
-          assert.equal(res.body.error, errors.unique('email', seedUser.email));
+          assert.equal(res.body.error, errors.unique('email', testUser.email));
           return done();
         });
     });
     it('should error with existing username', (done) => {
       request(app)
         .post('/users')
-        .send({ ...payloadWithPassword, username: seedUser.username })
+        .send({ ...payloadWithPassword, username: testUser.username })
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
-          assert.equal(res.body.error, errors.unique('username', seedUser.username));
+          assert.equal(res.body.error, errors.unique('username', testUser.username));
           return done();
         });
     });
     it('should error with existing gist_id', (done) => {
       request(app)
         .post('/users')
-        .send({ ...payloadWithPassword, gist_id: seedUser.gist_id })
+        .send({ ...payloadWithPassword, gist_id: testUser.gist_id })
         .expect(400)
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
-          assert.equal(res.body.error, errors.unique('gist_id', seedUser.gist_id));
+          assert.equal(res.body.error, errors.unique('gist_id', testUser.gist_id));
           return done();
         });
     });
@@ -233,16 +235,16 @@ describe('/users/:id', () => {
   describe('GET', () => {
     it('should return user (without hashed_pwd)', (done) => {
       request(app)
-        .get(`/users/${seedUser.id}`)
-        .set('Cookie', [`token=${seedToken}`])
+        .get(`/users/${testUser.id}`)
+        .set('Cookie', [`token=${testToken}`])
         .expect(200)
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
-          assert.equal(res.body.name, seedUser.name);
-          assert.equal(res.body.username, seedUser.username);
-          assert.equal(res.body.email, seedUser.email);
-          assert.equal(res.body.gist_id, seedUser.gist_id);
+          assert.equal(res.body.name, testUser.name);
+          assert.equal(res.body.username, testUser.username);
+          assert.equal(res.body.email, testUser.email);
+          assert.equal(res.body.gist_id, testUser.gist_id);
           assert.isString(res.body.updated_at);
           assert.isString(res.body.created_at);
           assert.notProperty(res.body, 'hashed_pwd');
@@ -251,7 +253,7 @@ describe('/users/:id', () => {
     });
     it('should error with no token', (done) => {
       request(app)
-        .get(`/users/${seedUser.id}`)
+        .get(`/users/${testUser.id}`)
         .expect(403)
         .expect('Content-Type', /json/)
         .end((err, res) => {
@@ -262,7 +264,7 @@ describe('/users/:id', () => {
     });
     it('should error with invalid token', (done) => {
       request(app)
-        .get(`/users/${seedUser.id}`)
+        .get(`/users/${testUser.id}`)
         .set('Cookie', [`token=${invalidToken}`])
         .expect(403)
         .expect('Content-Type', /json/)
@@ -274,7 +276,7 @@ describe('/users/:id', () => {
     });
     it('should error with unauthorized token', (done) => {
       request(app)
-        .get(`/users/${seedUser.id}`)
+        .get(`/users/${testUser.id}`)
         .set('Cookie', [`token=${wrongUserToken}`])
         .expect(403)
         .expect('Content-Type', /json/)
@@ -311,26 +313,26 @@ describe('/users/:id', () => {
   describe('PUT', () => {
     it('should update user password, gist_id, email, and username', (done) => {
       request(app)
-        .put(`/users/${seedUser.id}`)
-        .set('Cookie', `token=${seedToken}`)
+        .put(`/users/${testUser.id}`)
+        .set('Cookie', `token=${testToken}`)
         .send(putPayloadWithCurrPassword)
         .expect(200)
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
           return knex('users')
-            .where('id', seedUser.id)
+            .where('id', testUser.id)
             .first()
             .then((user) => {
               assert.equal(user.username, payload.username);
-              assert.notEqual(user.username, seedUser.username);
+              assert.notEqual(user.username, testUser.username);
               assert.equal(user.gist_id, payload.gist_id);
-              assert.notEqual(user.gist_id, seedUser.gist_id);
+              assert.notEqual(user.gist_id, testUser.gist_id);
               assert.equal(user.email, payload.email);
-              assert.notEqual(user.email, seedUser.email);
-              assert.notEqual(user.hashed_pwd, seedUser.hashed_pwd);
-              assert.equal(user.name, seedUser.name);
-              assert.equal(user.id, seedUser.id);
+              assert.notEqual(user.email, testUser.email);
+              assert.notEqual(user.hashed_pwd, testUser.hashed_pwd);
+              assert.equal(user.name, testUser.name);
+              assert.equal(user.id, testUser.id);
               assert.notDeepEqual(user.created_at, user.updated_at);
             })
             .then(done);
@@ -339,24 +341,24 @@ describe('/users/:id', () => {
     it('should update username', (done) => {
       const newUsername = 'new_username';
       request(app)
-        .put(`/users/${seedUser.id}`)
-        .set('Cookie', `token=${seedToken}`)
+        .put(`/users/${testUser.id}`)
+        .set('Cookie', `token=${testToken}`)
         .send({ username: newUsername, currentPassword: validCurrPwd })
         .expect(200)
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
           return knex('users')
-            .where('id', seedUser.id)
+            .where('id', testUser.id)
             .first()
             .then((user) => {
               assert.equal(user.username, newUsername);
-              assert.notEqual(user.username, seedUser.username);
-              assert.equal(user.gist_id, seedUser.gist_id);
-              assert.equal(user.email, seedUser.email);
-              assert.equal(user.hashed_pwd, seedUser.hashed_pwd);
-              assert.equal(user.name, seedUser.name);
-              assert.equal(user.id, seedUser.id);
+              assert.notEqual(user.username, testUser.username);
+              assert.equal(user.gist_id, testUser.gist_id);
+              assert.equal(user.email, testUser.email);
+              assert.equal(user.hashed_pwd, testUser.hashed_pwd);
+              assert.equal(user.name, testUser.name);
+              assert.equal(user.id, testUser.id);
               assert.notDeepEqual(user.created_at, user.updated_at);
             })
             .then(done);
@@ -372,8 +374,8 @@ describe('/users/:id', () => {
 
       it('username', (done) => {
         request(app)
-          .put(`/users/${seedUser.id}`)
-          .set('Cookie', `token=${seedToken}`)
+          .put(`/users/${testUser.id}`)
+          .set('Cookie', `token=${testToken}`)
           .send({ username: payload.username, currentPassword: validCurrPwd })
           .expect(400)
           .expect('Content-Type', /json/)
@@ -381,18 +383,18 @@ describe('/users/:id', () => {
             if (err) return done(formatErr(err, res));
             assert.equal(res.body.error, errors.unique('username', payload.username));
             return knex('users')
-              .where('id', seedUser.id)
+              .where('id', testUser.id)
               .first()
               .then((user) => {
-                assert.equal(user.username, seedUser.username);
+                assert.equal(user.username, testUser.username);
                 assert.notEqual(user.username, payload.username);
-                assert.equal(user.gist_id, seedUser.gist_id);
+                assert.equal(user.gist_id, testUser.gist_id);
                 assert.notEqual(user.gist_id, payload.gist_id);
-                assert.equal(user.email, seedUser.email);
+                assert.equal(user.email, testUser.email);
                 assert.notEqual(user.email, payload.email);
-                assert.equal(user.hashed_pwd, seedUser.hashed_pwd);
-                assert.equal(user.name, seedUser.name);
-                assert.equal(user.id, seedUser.id);
+                assert.equal(user.hashed_pwd, testUser.hashed_pwd);
+                assert.equal(user.name, testUser.name);
+                assert.equal(user.id, testUser.id);
                 assert.deepEqual(user.created_at, user.updated_at);
               })
               .then(done);
@@ -400,8 +402,8 @@ describe('/users/:id', () => {
       });
       it('email', (done) => {
         request(app)
-          .put(`/users/${seedUser.id}`)
-          .set('Cookie', `token=${seedToken}`)
+          .put(`/users/${testUser.id}`)
+          .set('Cookie', `token=${testToken}`)
           .send({ email: payload.email, currentPassword: validCurrPwd })
           .expect(400)
           .expect('Content-Type', /json/)
@@ -409,18 +411,18 @@ describe('/users/:id', () => {
             if (err) return done(formatErr(err, res));
             assert.equal(res.body.error, errors.unique('email', payload.email));
             return knex('users')
-              .where('id', seedUser.id)
+              .where('id', testUser.id)
               .first()
               .then((user) => {
-                assert.equal(user.username, seedUser.username);
+                assert.equal(user.username, testUser.username);
                 assert.notEqual(user.username, payload.username);
-                assert.equal(user.gist_id, seedUser.gist_id);
+                assert.equal(user.gist_id, testUser.gist_id);
                 assert.notEqual(user.gist_id, payload.gist_id);
-                assert.equal(user.email, seedUser.email);
+                assert.equal(user.email, testUser.email);
                 assert.notEqual(user.email, payload.email);
-                assert.equal(user.hashed_pwd, seedUser.hashed_pwd);
-                assert.equal(user.name, seedUser.name);
-                assert.equal(user.id, seedUser.id);
+                assert.equal(user.hashed_pwd, testUser.hashed_pwd);
+                assert.equal(user.name, testUser.name);
+                assert.equal(user.id, testUser.id);
                 assert.deepEqual(user.created_at, user.updated_at);
               })
               .then(done);
@@ -428,8 +430,8 @@ describe('/users/:id', () => {
       });
       it('gist_id', (done) => {
         request(app)
-          .put(`/users/${seedUser.id}`)
-          .set('Cookie', `token=${seedToken}`)
+          .put(`/users/${testUser.id}`)
+          .set('Cookie', `token=${testToken}`)
           .send({ gist_id: payload.gist_id, currentPassword: validCurrPwd })
           .expect(400)
           .expect('Content-Type', /json/)
@@ -437,18 +439,18 @@ describe('/users/:id', () => {
             if (err) return done(formatErr(err, res));
             assert.equal(res.body.error, errors.unique('gist_id', payload.gist_id));
             return knex('users')
-              .where('id', seedUser.id)
+              .where('id', testUser.id)
               .first()
               .then((user) => {
-                assert.equal(user.username, seedUser.username);
+                assert.equal(user.username, testUser.username);
                 assert.notEqual(user.username, payload.username);
-                assert.equal(user.gist_id, seedUser.gist_id);
+                assert.equal(user.gist_id, testUser.gist_id);
                 assert.notEqual(user.gist_id, payload.gist_id);
-                assert.equal(user.email, seedUser.email);
+                assert.equal(user.email, testUser.email);
                 assert.notEqual(user.email, payload.email);
-                assert.equal(user.hashed_pwd, seedUser.hashed_pwd);
-                assert.equal(user.name, seedUser.name);
-                assert.equal(user.id, seedUser.id);
+                assert.equal(user.hashed_pwd, testUser.hashed_pwd);
+                assert.equal(user.name, testUser.name);
+                assert.equal(user.id, testUser.id);
                 assert.deepEqual(user.created_at, user.updated_at);
               })
               .then(done);
@@ -456,26 +458,26 @@ describe('/users/:id', () => {
       });
       it('should not error when given the updating users\' data', (done) => {
         request(app)
-          .put(`/users/${seedUser.id}`)
-          .set('Cookie', `token=${seedToken}`)
-          .send(seedUserInfoWithCurrPwd)
+          .put(`/users/${testUser.id}`)
+          .set('Cookie', `token=${testToken}`)
+          .send(testUserInfoWithCurrPwd)
           .expect(200)
           .expect('Content-Type', /json/)
           .end((err, res) => {
             if (err) return done(formatErr(err, res));
             return knex('users')
-              .where('id', seedUser.id)
+              .where('id', testUser.id)
               .first()
               .then((user) => {
-                assert.equal(user.username, seedUser.username);
+                assert.equal(user.username, testUser.username);
                 assert.notEqual(user.username, payload.username);
-                assert.equal(user.gist_id, seedUser.gist_id);
+                assert.equal(user.gist_id, testUser.gist_id);
                 assert.notEqual(user.gist_id, payload.gist_id);
-                assert.equal(user.email, seedUser.email);
+                assert.equal(user.email, testUser.email);
                 assert.notEqual(user.email, payload.email);
-                assert.equal(user.hashed_pwd, seedUser.hashed_pwd);
-                assert.equal(user.name, seedUser.name);
-                assert.equal(user.id, seedUser.id);
+                assert.equal(user.hashed_pwd, testUser.hashed_pwd);
+                assert.equal(user.name, testUser.name);
+                assert.equal(user.id, testUser.id);
                 assert.notDeepEqual(user.created_at, user.updated_at);
               })
               .then(done);
@@ -484,7 +486,7 @@ describe('/users/:id', () => {
     });
     it('should error with no token', (done) => {
       request(app)
-        .put(`/users/${seedUser.id}`)
+        .put(`/users/${testUser.id}`)
         .send(putPayloadWithCurrPassword)
         .expect(403)
         .expect('Content-Type', /json/)
@@ -492,18 +494,18 @@ describe('/users/:id', () => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.noToken);
           return knex('users')
-            .where('id', seedUser.id)
+            .where('id', testUser.id)
             .first()
             .then((user) => {
-              assert.equal(user.username, seedUser.username);
+              assert.equal(user.username, testUser.username);
               assert.notEqual(user.username, payload.username);
-              assert.equal(user.gist_id, seedUser.gist_id);
+              assert.equal(user.gist_id, testUser.gist_id);
               assert.notEqual(user.gist_id, payload.gist_id);
-              assert.equal(user.email, seedUser.email);
+              assert.equal(user.email, testUser.email);
               assert.notEqual(user.email, payload.email);
-              assert.equal(user.hashed_pwd, seedUser.hashed_pwd);
-              assert.equal(user.name, seedUser.name);
-              assert.equal(user.id, seedUser.id);
+              assert.equal(user.hashed_pwd, testUser.hashed_pwd);
+              assert.equal(user.name, testUser.name);
+              assert.equal(user.id, testUser.id);
               assert.deepEqual(user.created_at, user.updated_at);
             })
             .then(done);
@@ -511,8 +513,8 @@ describe('/users/:id', () => {
     });
     it('should error without current password', (done) => {
       request(app)
-        .put(`/users/${seedUser.id}`)
-        .set('Cookie', `token=${seedToken}`)
+        .put(`/users/${testUser.id}`)
+        .set('Cookie', `token=${testToken}`)
         .send(payload)
         .expect(401)
         .expect('Content-Type', /json/)
@@ -520,18 +522,18 @@ describe('/users/:id', () => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.missingCurrPwd);
           return knex('users')
-            .where('id', seedUser.id)
+            .where('id', testUser.id)
             .first()
             .then((user) => {
-              assert.equal(user.username, seedUser.username);
+              assert.equal(user.username, testUser.username);
               assert.notEqual(user.username, payload.username);
-              assert.equal(user.gist_id, seedUser.gist_id);
+              assert.equal(user.gist_id, testUser.gist_id);
               assert.notEqual(user.gist_id, payload.gist_id);
-              assert.equal(user.email, seedUser.email);
+              assert.equal(user.email, testUser.email);
               assert.notEqual(user.email, payload.email);
-              assert.equal(user.hashed_pwd, seedUser.hashed_pwd);
-              assert.equal(user.name, seedUser.name);
-              assert.equal(user.id, seedUser.id);
+              assert.equal(user.hashed_pwd, testUser.hashed_pwd);
+              assert.equal(user.name, testUser.name);
+              assert.equal(user.id, testUser.id);
               assert.deepEqual(user.created_at, user.updated_at);
             })
             .then(done);
@@ -539,8 +541,8 @@ describe('/users/:id', () => {
     });
     it('should error with invalid current password', (done) => {
       request(app)
-        .put(`/users/${seedUser.id}`)
-        .set('Cookie', `token=${seedToken}`)
+        .put(`/users/${testUser.id}`)
+        .set('Cookie', `token=${testToken}`)
         .send(putPayloadWithInvalidCurrPassword)
         .expect(401)
         .expect('Content-Type', /json/)
@@ -548,18 +550,18 @@ describe('/users/:id', () => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.invalidCurrPwd);
           return knex('users')
-            .where('id', seedUser.id)
+            .where('id', testUser.id)
             .first()
             .then((user) => {
-              assert.equal(user.username, seedUser.username);
+              assert.equal(user.username, testUser.username);
               assert.notEqual(user.username, payload.username);
-              assert.equal(user.gist_id, seedUser.gist_id);
+              assert.equal(user.gist_id, testUser.gist_id);
               assert.notEqual(user.gist_id, payload.gist_id);
-              assert.equal(user.email, seedUser.email);
+              assert.equal(user.email, testUser.email);
               assert.notEqual(user.email, payload.email);
-              assert.equal(user.hashed_pwd, seedUser.hashed_pwd);
-              assert.equal(user.name, seedUser.name);
-              assert.equal(user.id, seedUser.id);
+              assert.equal(user.hashed_pwd, testUser.hashed_pwd);
+              assert.equal(user.name, testUser.name);
+              assert.equal(user.id, testUser.id);
               assert.deepEqual(user.created_at, user.updated_at);
             })
             .then(done);
@@ -567,7 +569,7 @@ describe('/users/:id', () => {
     });
     it('should error with invalid token', (done) => {
       request(app)
-        .put(`/users/${seedUser.id}`)
+        .put(`/users/${testUser.id}`)
         .set('Cookie', `token=${invalidToken}`)
         .send(putPayloadWithCurrPassword)
         .expect(403)
@@ -576,18 +578,18 @@ describe('/users/:id', () => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.invalidJWT);
           return knex('users')
-            .where('id', seedUser.id)
+            .where('id', testUser.id)
             .first()
             .then((user) => {
-              assert.equal(user.username, seedUser.username);
+              assert.equal(user.username, testUser.username);
               assert.notEqual(user.username, payload.username);
-              assert.equal(user.gist_id, seedUser.gist_id);
+              assert.equal(user.gist_id, testUser.gist_id);
               assert.notEqual(user.gist_id, payload.gist_id);
-              assert.equal(user.email, seedUser.email);
+              assert.equal(user.email, testUser.email);
               assert.notEqual(user.email, payload.email);
-              assert.equal(user.hashed_pwd, seedUser.hashed_pwd);
-              assert.equal(user.name, seedUser.name);
-              assert.equal(user.id, seedUser.id);
+              assert.equal(user.hashed_pwd, testUser.hashed_pwd);
+              assert.equal(user.name, testUser.name);
+              assert.equal(user.id, testUser.id);
               assert.deepEqual(user.created_at, user.updated_at);
             })
             .then(done);
@@ -595,7 +597,7 @@ describe('/users/:id', () => {
     });
     it('should error with unauthorized token', (done) => {
       request(app)
-        .put(`/users/${seedUser.id}`)
+        .put(`/users/${testUser.id}`)
         .set('Cookie', `token=${wrongUserToken}`)
         .send(putPayloadWithCurrPassword)
         .expect(403)
@@ -604,18 +606,18 @@ describe('/users/:id', () => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.unauthorized);
           return knex('users')
-            .where('id', seedUser.id)
+            .where('id', testUser.id)
             .first()
             .then((user) => {
-              assert.equal(user.username, seedUser.username);
+              assert.equal(user.username, testUser.username);
               assert.notEqual(user.username, payload.username);
-              assert.equal(user.gist_id, seedUser.gist_id);
+              assert.equal(user.gist_id, testUser.gist_id);
               assert.notEqual(user.gist_id, payload.gist_id);
-              assert.equal(user.email, seedUser.email);
+              assert.equal(user.email, testUser.email);
               assert.notEqual(user.email, payload.email);
-              assert.equal(user.hashed_pwd, seedUser.hashed_pwd);
-              assert.equal(user.name, seedUser.name);
-              assert.equal(user.id, seedUser.id);
+              assert.equal(user.hashed_pwd, testUser.hashed_pwd);
+              assert.equal(user.name, testUser.name);
+              assert.equal(user.id, testUser.id);
               assert.deepEqual(user.created_at, user.updated_at);
             })
             .then(done);
@@ -623,8 +625,8 @@ describe('/users/:id', () => {
     });
     it('should error with empty body (but with current password)', (done) => {
       request(app)
-        .put(`/users/${seedUser.id}`)
-        .set('Cookie', `token=${seedToken}`)
+        .put(`/users/${testUser.id}`)
+        .set('Cookie', `token=${testToken}`)
         .send({ currentPassword: validCurrPwd })
         .expect(400)
         .expect('Content-Type', /json/)
@@ -632,18 +634,18 @@ describe('/users/:id', () => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.noBody);
           return knex('users')
-            .where('id', seedUser.id)
+            .where('id', testUser.id)
             .first()
             .then((user) => {
-              assert.equal(user.username, seedUser.username);
+              assert.equal(user.username, testUser.username);
               assert.notEqual(user.username, payload.username);
-              assert.equal(user.gist_id, seedUser.gist_id);
+              assert.equal(user.gist_id, testUser.gist_id);
               assert.notEqual(user.gist_id, payload.gist_id);
-              assert.equal(user.email, seedUser.email);
+              assert.equal(user.email, testUser.email);
               assert.notEqual(user.email, payload.email);
-              assert.equal(user.hashed_pwd, seedUser.hashed_pwd);
-              assert.equal(user.name, seedUser.name);
-              assert.equal(user.id, seedUser.id);
+              assert.equal(user.hashed_pwd, testUser.hashed_pwd);
+              assert.equal(user.name, testUser.name);
+              assert.equal(user.id, testUser.id);
               assert.deepEqual(user.created_at, user.updated_at);
             })
             .then(done);
@@ -659,18 +661,18 @@ describe('/users/:id', () => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.idDNE(uuidThatDNE));
           return knex('users')
-            .where('id', seedUser.id)
+            .where('id', testUser.id)
             .first()
             .then((user) => {
-              assert.equal(user.username, seedUser.username);
+              assert.equal(user.username, testUser.username);
               assert.notEqual(user.username, payload.username);
-              assert.equal(user.gist_id, seedUser.gist_id);
+              assert.equal(user.gist_id, testUser.gist_id);
               assert.notEqual(user.gist_id, payload.gist_id);
-              assert.equal(user.email, seedUser.email);
+              assert.equal(user.email, testUser.email);
               assert.notEqual(user.email, payload.email);
-              assert.equal(user.hashed_pwd, seedUser.hashed_pwd);
-              assert.equal(user.name, seedUser.name);
-              assert.equal(user.id, seedUser.id);
+              assert.equal(user.hashed_pwd, testUser.hashed_pwd);
+              assert.equal(user.name, testUser.name);
+              assert.equal(user.id, testUser.id);
               assert.deepEqual(user.created_at, user.updated_at);
             })
             .then(done);
@@ -678,8 +680,8 @@ describe('/users/:id', () => {
     });
     it('should error with invalid fields', (done) => {
       request(app)
-        .put(`/users/${seedUser.id}`)
-        .set('Cookie', `token=${seedToken}`)
+        .put(`/users/${testUser.id}`)
+        .set('Cookie', `token=${testToken}`)
         .send({ ...putPayloadWithCurrPassword, bad: 'field' })
         .expect(400)
         .expect('Content-Type', /json/)
@@ -687,18 +689,18 @@ describe('/users/:id', () => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.invalid(['bad']));
           return knex('users')
-            .where('id', seedUser.id)
+            .where('id', testUser.id)
             .first()
             .then((user) => {
-              assert.equal(user.username, seedUser.username);
+              assert.equal(user.username, testUser.username);
               assert.notEqual(user.username, payload.username);
-              assert.equal(user.gist_id, seedUser.gist_id);
+              assert.equal(user.gist_id, testUser.gist_id);
               assert.notEqual(user.gist_id, payload.gist_id);
-              assert.equal(user.email, seedUser.email);
+              assert.equal(user.email, testUser.email);
               assert.notEqual(user.email, payload.email);
-              assert.equal(user.hashed_pwd, seedUser.hashed_pwd);
-              assert.equal(user.name, seedUser.name);
-              assert.equal(user.id, seedUser.id);
+              assert.equal(user.hashed_pwd, testUser.hashed_pwd);
+              assert.equal(user.name, testUser.name);
+              assert.equal(user.id, testUser.id);
               assert.deepEqual(user.created_at, user.updated_at);
             })
             .then(done);
@@ -706,8 +708,8 @@ describe('/users/:id', () => {
     });
     it('should error with invalid gistId', (done) => {
       request(app)
-        .put(`/users/${seedUser.id}`)
-        .set('Cookie', `token=${seedToken}`)
+        .put(`/users/${testUser.id}`)
+        .set('Cookie', `token=${testToken}`)
         .send({ ...putPayloadWithCurrPassword, gist_id: invalidGistId })
         .expect(400)
         .expect('Content-Type', /json/)
@@ -715,18 +717,18 @@ describe('/users/:id', () => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.gistDNE(invalidGistId));
           return knex('users')
-            .where('id', seedUser.id)
+            .where('id', testUser.id)
             .first()
             .then((user) => {
-              assert.equal(user.username, seedUser.username);
+              assert.equal(user.username, testUser.username);
               assert.notEqual(user.username, payload.username);
-              assert.equal(user.gist_id, seedUser.gist_id);
+              assert.equal(user.gist_id, testUser.gist_id);
               assert.notEqual(user.gist_id, payload.gist_id);
-              assert.equal(user.email, seedUser.email);
+              assert.equal(user.email, testUser.email);
               assert.notEqual(user.email, payload.email);
-              assert.equal(user.hashed_pwd, seedUser.hashed_pwd);
-              assert.equal(user.name, seedUser.name);
-              assert.equal(user.id, seedUser.id);
+              assert.equal(user.hashed_pwd, testUser.hashed_pwd);
+              assert.equal(user.name, testUser.name);
+              assert.equal(user.id, testUser.id);
               assert.deepEqual(user.created_at, user.updated_at);
             })
             .then(done);
@@ -734,8 +736,8 @@ describe('/users/:id', () => {
     });
     it('should error with invalid current password before checking gist', (done) => {
       request(app)
-        .put(`/users/${seedUser.id}`)
-        .set('Cookie', `token=${seedToken}`)
+        .put(`/users/${testUser.id}`)
+        .set('Cookie', `token=${testToken}`)
         .send({ ...putPayloadWithInvalidCurrPassword, gist_id: invalidGistId })
         .expect(401)
         .expect('Content-Type', /json/)
@@ -743,18 +745,18 @@ describe('/users/:id', () => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.invalidCurrPwd);
           return knex('users')
-            .where('id', seedUser.id)
+            .where('id', testUser.id)
             .first()
             .then((user) => {
-              assert.equal(user.username, seedUser.username);
+              assert.equal(user.username, testUser.username);
               assert.notEqual(user.username, payload.username);
-              assert.equal(user.gist_id, seedUser.gist_id);
+              assert.equal(user.gist_id, testUser.gist_id);
               assert.notEqual(user.gist_id, payload.gist_id);
-              assert.equal(user.email, seedUser.email);
+              assert.equal(user.email, testUser.email);
               assert.notEqual(user.email, payload.email);
-              assert.equal(user.hashed_pwd, seedUser.hashed_pwd);
-              assert.equal(user.name, seedUser.name);
-              assert.equal(user.id, seedUser.id);
+              assert.equal(user.hashed_pwd, testUser.hashed_pwd);
+              assert.equal(user.name, testUser.name);
+              assert.equal(user.id, testUser.id);
               assert.deepEqual(user.created_at, user.updated_at);
             })
             .then(done);
@@ -762,8 +764,8 @@ describe('/users/:id', () => {
     });
     it('should error with invalid ballin-scripts gistId', (done) => {
       request(app)
-        .put(`/users/${seedUser.id}`)
-        .set('Cookie', `token=${seedToken}`)
+        .put(`/users/${testUser.id}`)
+        .set('Cookie', `token=${testToken}`)
         .send({ ...putPayloadWithCurrPassword, gist_id: invalidBSGistId })
         .expect(400)
         .expect('Content-Type', /json/)
@@ -771,18 +773,46 @@ describe('/users/:id', () => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.invalidBSGist);
           return knex('users')
-            .where('id', seedUser.id)
+            .where('id', testUser.id)
             .first()
             .then((user) => {
-              assert.equal(user.username, seedUser.username);
+              assert.equal(user.username, testUser.username);
               assert.notEqual(user.username, payload.username);
-              assert.equal(user.gist_id, seedUser.gist_id);
+              assert.equal(user.gist_id, testUser.gist_id);
               assert.notEqual(user.gist_id, payload.gist_id);
-              assert.equal(user.email, seedUser.email);
+              assert.equal(user.email, testUser.email);
               assert.notEqual(user.email, payload.email);
-              assert.equal(user.hashed_pwd, seedUser.hashed_pwd);
-              assert.equal(user.name, seedUser.name);
-              assert.equal(user.id, seedUser.id);
+              assert.equal(user.hashed_pwd, testUser.hashed_pwd);
+              assert.equal(user.name, testUser.name);
+              assert.equal(user.id, testUser.id);
+              assert.deepEqual(user.created_at, user.updated_at);
+            })
+            .then(done);
+        });
+    });
+    it('should error with demo id', (done) => {
+      request(app)
+        .put(`/users/${demoUser.id}`)
+        .set('Cookie', `token=${demoToken}`)
+        .send({ ...putPayloadWithCurrPassword })
+        .expect(403)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) return done(formatErr(err, res));
+          assert.equal(res.body.error, errors.demoDisabled);
+          return knex('users')
+            .where('id', demoUser.id)
+            .first()
+            .then((user) => {
+              assert.equal(user.username, demoUser.username);
+              assert.notEqual(user.username, payload.username);
+              assert.equal(user.gist_id, demoUser.gist_id);
+              assert.notEqual(user.gist_id, payload.gist_id);
+              assert.equal(user.email, demoUser.email);
+              assert.notEqual(user.email, payload.email);
+              assert.equal(user.hashed_pwd, demoUser.hashed_pwd);
+              assert.equal(user.name, demoUser.name);
+              assert.equal(user.id, demoUser.id);
               assert.deepEqual(user.created_at, user.updated_at);
             })
             .then(done);
@@ -792,14 +822,14 @@ describe('/users/:id', () => {
   describe('DELETE', () => {
     it('should delete user', (done) => {
       request(app)
-        .delete(`/users/${seedUser.id}`)
+        .delete(`/users/${testUser.id}`)
         .send({ currentPassword: validCurrPwd })
-        .set('Cookie', `token=${seedToken}`)
+        .set('Cookie', `token=${testToken}`)
         .expect(204)
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
           return knex('users')
-            .where('id', seedUser.id)
+            .where('id', testUser.id)
             .then((user) => {
               assert.lengthOf(user, 0);
             })
@@ -808,15 +838,15 @@ describe('/users/:id', () => {
     });
     it('should error with invalid currPassword', (done) => {
       request(app)
-        .delete(`/users/${seedUser.id}`)
+        .delete(`/users/${testUser.id}`)
         .send({ currentPassword: invalidCurrPwd })
-        .set('Cookie', `token=${seedToken}`)
+        .set('Cookie', `token=${testToken}`)
         .expect(401)
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.invalidCurrPwd);
           return knex('users')
-            .where('id', seedUser.id)
+            .where('id', testUser.id)
             .then((user) => {
               assert.lengthOf(user, 1);
             })
@@ -825,14 +855,14 @@ describe('/users/:id', () => {
     });
     it('should error without currPassword', (done) => {
       request(app)
-        .delete(`/users/${seedUser.id}`)
-        .set('Cookie', `token=${seedToken}`)
+        .delete(`/users/${testUser.id}`)
+        .set('Cookie', `token=${testToken}`)
         .expect(401)
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.missingCurrPwd);
           return knex('users')
-            .where('id', seedUser.id)
+            .where('id', testUser.id)
             .then((user) => {
               assert.lengthOf(user, 1);
             })
@@ -841,14 +871,14 @@ describe('/users/:id', () => {
     });
     it('should error with no token', (done) => {
       request(app)
-        .delete(`/users/${seedUser.id}`)
+        .delete(`/users/${testUser.id}`)
         .send({ currentPassword: validCurrPwd })
         .expect(403)
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.noToken);
           return knex('users')
-            .where('id', seedUser.id)
+            .where('id', testUser.id)
             .then((user) => {
               assert.lengthOf(user, 1);
             })
@@ -857,7 +887,7 @@ describe('/users/:id', () => {
     });
     it('should error with invalid token', (done) => {
       request(app)
-        .delete(`/users/${seedUser.id}`)
+        .delete(`/users/${testUser.id}`)
         .set('Cookie', `token=${invalidToken}`)
         .send({ currentPassword: validCurrPwd })
         .expect(403)
@@ -865,7 +895,7 @@ describe('/users/:id', () => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.invalidJWT);
           return knex('users')
-            .where('id', seedUser.id)
+            .where('id', testUser.id)
             .then((user) => {
               assert.lengthOf(user, 1);
             })
@@ -874,7 +904,7 @@ describe('/users/:id', () => {
     });
     it('should error with unauthorized token', (done) => {
       request(app)
-        .delete(`/users/${seedUser.id}`)
+        .delete(`/users/${testUser.id}`)
         .set('Cookie', `token=${wrongUserToken}`)
         .send({ currentPassword: validCurrPwd })
         .expect(403)
@@ -882,7 +912,7 @@ describe('/users/:id', () => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.unauthorized);
           return knex('users')
-            .where('id', seedUser.id)
+            .where('id', testUser.id)
             .then((user) => {
               assert.lengthOf(user, 1);
             })
@@ -900,7 +930,23 @@ describe('/users/:id', () => {
           assert.equal(res.body.error, errors.idDNE(uuidThatDNE));
           return knex('users')
             .then((users) => {
-              assert.lengthOf(users, 1);
+              assert.lengthOf(users, seeds.length);
+            })
+            .then(done);
+        });
+    });
+    it('should error with demo id', (done) => {
+      request(app)
+        .delete(`/users/${demoUser.id}`)
+        .set('Cookie', `token=${demoToken}`)
+        .expect(403)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) return done(formatErr(err, res));
+          assert.equal(res.body.error, errors.demoDisabled);
+          return knex('users')
+            .then((users) => {
+              assert.lengthOf(users, seeds.length);
             })
             .then(done);
         });

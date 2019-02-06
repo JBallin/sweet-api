@@ -5,9 +5,9 @@
   "scripts": {
     "start": "node ./bin/www",
     "dev": "nodemon ./bin/www",
-    "test": "eslint . && NODE_ENV=test mocha",
-    "testNoLint": "NODE_ENV=test mocha",
-    "testDebug": "NODE_ENV=test DEBUG=true mocha",
+    "test": "eslint . && NODE_ENV=test mocha --timeout 4000",
+    "testNoLint": "NODE_ENV=test mocha --timeout 4000",
+    "testDebug": "NODE_ENV=test DEBUG=true mocha --timeout 4000",
     "seed-dev": "knex migrate:rollback; knex migrate:latest; knex seed:run",
     "seed-prod": "heroku run 'knex migrate:rollback; knex migrate:latest; knex seed:run'",
     "get-users-dev": "psql sweet_dev -c 'select * from users;'",
