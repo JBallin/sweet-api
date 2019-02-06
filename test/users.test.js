@@ -29,6 +29,7 @@ const errors = {
   invalidJWT: 'Invalid token',
   unauthorized: 'Unauthorized',
   noToken: 'Missing token',
+  demoDisabled: 'Updating or deleting the demo account is disabled',
 };
 
 const payload = {
@@ -789,6 +790,34 @@ describe('/users/:id', () => {
             .then(done);
         });
     });
+    it('should error with demo id', (done) => {
+      request(app)
+        .put(`/users/${demoUser.id}`)
+        .set('Cookie', `token=${demoToken}`)
+        .send({ ...putPayloadWithCurrPassword })
+        .expect(403)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) return done(formatErr(err, res));
+          assert.equal(res.body.error, errors.demoDisabled);
+          return knex('users')
+            .where('id', demoUser.id)
+            .first()
+            .then((user) => {
+              assert.equal(user.username, demoUser.username);
+              assert.notEqual(user.username, payload.username);
+              assert.equal(user.gist_id, demoUser.gist_id);
+              assert.notEqual(user.gist_id, payload.gist_id);
+              assert.equal(user.email, demoUser.email);
+              assert.notEqual(user.email, payload.email);
+              assert.equal(user.hashed_pwd, demoUser.hashed_pwd);
+              assert.equal(user.name, demoUser.name);
+              assert.equal(user.id, demoUser.id);
+              assert.deepEqual(user.created_at, user.updated_at);
+            })
+            .then(done);
+        });
+    });
   });
   describe('DELETE', () => {
     it('should delete user', (done) => {
@@ -899,6 +928,22 @@ describe('/users/:id', () => {
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
           assert.equal(res.body.error, errors.idDNE(uuidThatDNE));
+          return knex('users')
+            .then((users) => {
+              assert.lengthOf(users, seeds.length);
+            })
+            .then(done);
+        });
+    });
+    it('should error with demo id', (done) => {
+      request(app)
+        .delete(`/users/${demoUser.id}`)
+        .set('Cookie', `token=${demoToken}`)
+        .expect(403)
+        .expect('Content-Type', /json/)
+        .end((err, res) => {
+          if (err) return done(formatErr(err, res));
+          assert.equal(res.body.error, errors.demoDisabled);
           return knex('users')
             .then((users) => {
               assert.lengthOf(users, seeds.length);
