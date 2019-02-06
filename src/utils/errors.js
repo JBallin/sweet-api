@@ -28,6 +28,7 @@ module.exports = {
   invalidCurrPwd: createError(401, 'Invalid current password'),
   missingCurrPwd: createError(401, 'Missing current password'),
   updatePwd: createError(500, 'Error updating password'),
+  demoDisabled: createError(403, 'Updating or deleting the demo account is disabled'),
   // LOGIN
   missingLogin: createError(400, 'Missing email or password'),
   invalidLogin: createError(401, 'Invalid credentials. Please try again.'),
