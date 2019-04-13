@@ -40,8 +40,9 @@ const updateUser = async (id, body) => {
       updateRequest.hashed_pwd = bcrypt.hashSync(password, 10);
       delete updateRequest.password;
     }
-
-    if (email) updateRequest.email = email.toLowerCase();
+    if (email) {
+      updateRequest.email = email.toLowerCase();
+    }
 
     const [editedUser] = await knex('users').where('id', id).update({
       ...updateRequest, updated_at: knex.fn.now(),
