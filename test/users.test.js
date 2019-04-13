@@ -938,6 +938,7 @@ describe('/users/:id', () => {
     it('should error with demo id', (done) => {
       request(app)
         .delete(`/users/${demoUser.id}`)
+        .send({ currentPassword: validCurrPwd })
         .set('Cookie', `token=${demoToken}`)
         .expect(403)
         .expect('Content-Type', /json/)
