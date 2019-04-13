@@ -50,10 +50,8 @@ const updateUser = async (id, body) => {
     const userUpdates = updatedFields.reduce((res, field) => ({
       ...res, [field]: editedUser[field],
     }), {});
-    if (editedUser.hashed_pwd) {
+    if (Object.prototype.hasOwnProperty.call(userUpdates, 'password')) {
       userUpdates.password = 'UPDATED';
-    } else if (userUpdates.password) {
-      return errors.updatePwd;
     }
     return userUpdates;
   } catch (e) {
