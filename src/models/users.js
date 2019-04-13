@@ -40,8 +40,9 @@ const updateUser = async (id, body) => {
       updateRequest.hashed_pwd = bcrypt.hashSync(password, 10);
       delete updateRequest.password;
     }
-
-    if (email) updateRequest.email = email.toLowerCase();
+    if (email) {
+      updateRequest.email = email.toLowerCase();
+    }
 
     const [editedUser] = await knex('users').where('id', id).update({
       ...updateRequest, updated_at: knex.fn.now(),
@@ -49,10 +50,8 @@ const updateUser = async (id, body) => {
     const userUpdates = updatedFields.reduce((res, field) => ({
       ...res, [field]: editedUser[field],
     }), {});
-    if (editedUser.hashed_pwd) {
+    if (Object.prototype.hasOwnProperty.call(userUpdates, 'password')) {
       userUpdates.password = 'UPDATED';
-    } else if (userUpdates.password) {
-      return errors.updatePwd;
     }
     return userUpdates;
   } catch (e) {

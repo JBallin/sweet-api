@@ -348,6 +348,8 @@ describe('/users/:id', () => {
         .expect('Content-Type', /json/)
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
+          const { password } = res.body;
+          assert.isUndefined(password, 'password should not be returned if not edited');
           return knex('users')
             .where('id', testUser.id)
             .first()
