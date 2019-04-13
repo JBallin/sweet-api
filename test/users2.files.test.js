@@ -22,11 +22,7 @@ const seedToken = createToken({ id: seedId });
 const invalidToken = createToken({ id: seedId }, 0);
 const wrongUserToken = createToken({ id: uuidThatDNE });
 
-const expectedSeedRes = [{
-  id: 8,
-  category: 'Other',
-  files: [{ title: '.MyConfig', extension: '.md' }],
-}];
+const baseFile = { title: '.MyConfig', extension: '.md' };
 
 describe('/users/:id/files', () => {
   describe('GET', () => {
@@ -38,7 +34,12 @@ describe('/users/:id/files', () => {
         .expect(200)
         .end((err, res) => {
           if (err) return done(formatErr(err, res));
-          assert.deepEqual(res.body, expectedSeedRes);
+          const baseFileIndex = res.body
+            .findIndex(({ category, files }) => category === 'Other' && files
+              .find(({ title, extension }) => (
+                title === baseFile.title && extension === baseFile.extension
+              )));
+          assert.notEqual(baseFileIndex, -1);
           return done();
         });
     });
