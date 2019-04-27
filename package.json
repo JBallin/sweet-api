@@ -6,6 +6,7 @@
     "start": "node ./bin/www",
     "dev": "nodemon ./bin/www",
     "test": "eslint . && NODE_ENV=test mocha --timeout 4000",
+    "coveralls": "nyc npm test && nyc report --reporter=text-lcov | coveralls",
     "testNoLint": "NODE_ENV=test mocha --timeout 4000",
     "testDebug": "NODE_ENV=test DEBUG=true mocha --timeout 4000",
     "seed-dev": "knex migrate:rollback; knex migrate:latest; knex seed:run",
@@ -30,11 +31,13 @@
   },
   "devDependencies": {
     "chai": "^4.1.2",
+    "coveralls": "^3.0.3",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^13.0.0",
     "eslint-plugin-import": "^2.13.0",
     "mocha": "^5.2.0",
     "nodemon": "^1.18.7",
+    "nyc": "^14.0.0",
     "supertest": "^3.1.0"
   }
 }
