@@ -1,4 +1,4 @@
-# Sweet API [![Coverage Status](https://coveralls.io/repos/github/JBallin/sweet-api/badge.svg?branch=master)](https://coveralls.io/github/JBallin/sweet-api?branch=master)
+# Sweet API [![Build Status](https://travis-ci.com/JBallin/sweet-api.svg?branch=master)](https://travis-ci.com/JBallin/sweet-api) [![Coverage Status](https://coveralls.io/repos/github/JBallin/sweet-api/badge.svg?branch=master)](https://coveralls.io/github/JBallin/sweet-api?branch=master)
 
 Frontend: [My Sweet Config](https://github.com/JBallin/sweet-config)
 <br>
