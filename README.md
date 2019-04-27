@@ -1,4 +1,4 @@
-# Sweet API
+# Sweet API [![Coverage Status](https://coveralls.io/repos/github/JBallin/sweet-api/badge.svg?branch=master)](https://coveralls.io/github/JBallin/sweet-api?branch=master)
 
 Frontend: [My Sweet Config](https://github.com/JBallin/sweet-config)
 <br>
