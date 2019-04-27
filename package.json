@@ -6,6 +6,7 @@
     "start": "node ./bin/www",
     "dev": "nodemon ./bin/www",
     "test": "eslint . && NODE_ENV=test mocha --timeout 4000",
+    "coveralls": "nyc npm test && nyc report --reporter=text-lcov | coveralls",
     "testNoLint": "NODE_ENV=test mocha --timeout 4000",
     "testDebug": "NODE_ENV=test DEBUG=true mocha --timeout 4000",
     "seed-dev": "knex migrate:rollback; knex migrate:latest; knex seed:run",
