@@ -1,5 +1,9 @@
 {
   "name": "sweet-api",
+  "engines": {
+    "node": "12",
+    "npm": "6"
+  },
   "version": "0.0.0",
   "private": true,
   "scripts": {
