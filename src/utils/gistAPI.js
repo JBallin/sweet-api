@@ -3,12 +3,12 @@ const errors = require('./errors');
 
 const gistAPI = 'https://api.github.com/gists';
 const { GITHUB_TOKEN } = process.env;
-const token = GITHUB_TOKEN ? `access_token=${GITHUB_TOKEN}` : '';
+
+const headers = GITHUB_TOKEN ? { Authorization: `token ${GITHUB_TOKEN}` } : {};
 
 async function fetchGist(gistId) {
-  const gistAPIwithIdAndToken = `${gistAPI}/${gistId}?${token}`;
   try {
-    const gistJSON = await fetch(gistAPIwithIdAndToken);
+    const gistJSON = await fetch(`${gistAPI}/${gistId}`, { headers });
     const gist = await gistJSON.json();
     const { message } = gist;
 
